@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent;
+  }
+  
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-custom {
+    @apply max-w-6xl mx-auto;
+  }
+  
+  /* Compact spacing utilities */
+  .section-compact {
+    @apply py-12 md:py-16;
+  }
+  
+  .section-margin {
+    @apply mb-8 md:mb-12;
+  }
+}
