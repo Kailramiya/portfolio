@@ -50,7 +50,7 @@ const About = () => {
             transition={{ duration: 0.6 }}
           >
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Breif Description
+              Brief Description
             </h3>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-3 text-sm">
               {portfolioData.personal.summary}
