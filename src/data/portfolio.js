@@ -80,7 +80,25 @@ export const portfolioData = {
       status: "Completed",
       github: "https://github.com/Kailramiya/Vehicle-Detection-and-Counting-using-yolov-",
       demo: "https://github.com/Kailramiya/Vehicle-Detection-and-Counting-using-yolov-/tree/main/results" // Add demo link if available
-    }
+    },
+    {
+      id: 5,
+      title: "StayEase - Property Rental & Booking Platform",
+      description: "Full‑stack property rental and booking platform providing end‑to‑end booking flows for guests and an admin interface for hosts and property managers",
+      tech: ["React", "Vite", "Node.js", "Express", "MongoDB", "Tailwind CSS", "Cloudinary", "Axios", "JWT"],
+      features: [
+      "End-to-end booking flow with guest & host interfaces",
+      "Favorites, reviews, and contact-owner (server-side email)",
+      "Cloudinary-powered image uploads for properties",
+      "Local/mock payment flow for development and testing (no external keys required)",
+      "Cookie-based client auth persistence and axios API wrapper reading tokens from cookies",
+      "Admin panel for property and booking management"
+      ],
+      period: "Aug 2025 - Nov 2025",
+      status: "Live (demo placeholder)",
+      github: "https://github.com/Kailramiya/StayEase",
+      demo: "https://stay-ease-frontend-one.vercel.app"
+      },
 
 
   ],
