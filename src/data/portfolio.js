@@ -18,7 +18,36 @@ export const portfolioData = {
   
   projects: [
     {
-      id: 1,
+  id: 2,
+  title: "StayEase – Property Rental & Booking Platform",
+  description: "Full-stack property rental and booking platform with AI-assisted listing ranking, caching, and end-to-end booking workflows",
+  tech: [
+    "React",
+    "Vite",
+    "Tailwind CSS",
+    "Node.js",
+    "Express.js",
+    "MongoDB",
+    "Mongoose",
+    "Redis",
+    "JWT",
+    "Axios"
+  ],
+  features: [
+    "End-to-end rental flow including property listings, bookings, reviews, and favorites",
+    "Secure authentication using JWT with httpOnly cookies",
+    "AI-assisted property ranking based on views, ratings, bookings, and recency",
+    "Redis caching for read-heavy APIs to improve search and listing performance",
+    "Admin-ready backend architecture with modular REST APIs"
+  ],
+  period: "Sep 2024 – Present",
+  status: "Live",
+  github: "https://github.com/Kailramiya/StayEase",
+  demo: "https://stay-ease-frontend-one.vercel.app/"
+},
+
+    {
+      id: 2,
       title: "NetworQ - Enterprise Networking Platform",
       description: "LinkedIn-inspired professional platform serving 500+ registered users with real-time messaging capabilities",
       tech: ["React.js", "Node.js", "MongoDB", "JWT", "Tailwind CSS","Express.js","Mongoose","Axios"],
@@ -33,23 +62,7 @@ export const portfolioData = {
       github: "https://github.com/Kailramiya/networq",
       demo: "https://networq-black.vercel.app/"
     },
-    {
-      id: 2,
-      title: "Hospitality Marketplace",
-      description: "Comprehensive booking ecosystem supporting 100+ concurrent users with dynamic pricing algorithms",
-      tech: ["Node.js", "Express.js", "MongoDB", "EJS","Mongoose","Tailwind CSS","Multer","Axios"],
-      features: [
-        "Advanced filtering and geolocation search",
-        "Administrative control panel",
-        "Secure payment gateway integration",
-        "Analytics dashboard"
-      ],
-      period: "Mar 2024 – Jun 2024",
-      status: "Completed",
-      github: "https://github.com/yourusername/marketplace",
-      admin: "https://drive.google.com/file/d/1D_TEzS6S-W8O_Nqy8de6Gn-qDb3wXoSP/view",
-      user :"https://drive.google.com/file/d/10n2oK6_N7ZkTriKPOlbPHUI_qgYEC7rC/view"
-    },
+   
     {
       id: 3,
       title: "AI-Powered Security Monitoring System",
