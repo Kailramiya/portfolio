@@ -98,9 +98,9 @@ export const portfolioData = {
 
   skills: {
     "Programming Languages": ["C", "C++", "Python", "JavaScript", "SQL"],
-    "Frontend": ["React.js", "HTML5", "CSS3", "Tailwind CSS", "EJS", "Bootstrap","Responsive Web Optimization"],
+    "Frontend": ["React.js","React Native", "HTML5", "CSS3", "Tailwind CSS", "EJS", "Bootstrap","Responsive Web Optimization"],
     "Backend": ["Node.js", "Express.js", "RESTful APIs", "JWT", "Microservices"],
-    "Database": ["MongoDB", "MySQL", "Query Optimization"],
+    "Database": ["MongoDB", "MySQL", "Query Optimization", "Redis", "Mongoose", "Database Design", "CRUD Operations"],
     "AI/ML": ["OpenCV", "YOLOv3", "NumPy", "Pandas", "Computer Vision"],
     "DevOps": ["Git",  "Postman"]
   },
