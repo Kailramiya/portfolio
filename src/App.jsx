@@ -28,7 +28,7 @@ function App() {
       
       <footer className="bg-gray-900 dark:bg-black text-white py-6">
         <div className="container-custom section-padding text-center">
-          <p className="text-sm">&copy; 2024 Aman Kumar. All rights reserved.</p>
+          <p className="text-sm">&copy; 2026 Aman Kumar. All rights reserved.</p>
           <p className="text-gray-400 text-xs mt-1">
             Built with React, Vite, and Tailwind CSS
           </p>

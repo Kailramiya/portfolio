@@ -13,7 +13,7 @@ const Hero = () => {
 
   const handleDownloadResume = () => {
     const link = document.createElement('a');
-    link.href = '/Aman_kumar_resume_08-08.pdf';
+    link.href = '/Aman_kumar_resume.pdf';
     link.download = 'Aman_Kumar_Resume.pdf';
     link.click();
   };
