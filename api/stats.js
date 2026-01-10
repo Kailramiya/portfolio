@@ -387,17 +387,74 @@ async function getGeeksForGeeksStats(username) {
 			},
 		}).then(r => r.text())
 
-		// Try to extract embedded JSON or data attributes
-		const solvedMatch = html.match(/total.*?problems?.*?solved["']?\s*:\s*([0-9]+)/i) ||
-		                   html.match(/solved["']?\s*:\s*([0-9]+)/i) ||
-		                   html.match(/([0-9]+)\s*problems?\s*solved/i)
-		const scoreMatch = html.match(/coding.*?score["']?\s*:\s*([0-9]+)/i) ||
-		                  html.match(/score["']?\s*:\s*([0-9]+)/i)
-		const rankMatch = html.match(/institute.*?rank["']?\s*:\s*([0-9]+)/i)
+		let totalSolved = null
+		let codingScore = null
+		let instituteRank = null
 
-		const totalSolved = solvedMatch ? Number(solvedMatch[1]) : null
-		const codingScore = scoreMatch ? Number(scoreMatch[1]) : null
-		const instituteRank = rankMatch ? Number(rankMatch[1]) : null
+		// Try to extract JSON-LD or embedded JSON data
+		const jsonMatch = html.match(/<script[^>]*type=["']application\/json["'][^>]*>([\s\S]*?)<\/script>/i)
+		if (jsonMatch) {
+			try {
+				const jsonData = JSON.parse(jsonMatch[1])
+				// Recursively search for stats fields
+				const search = (obj, depth = 0) => {
+					if (depth > 10 || !obj || typeof obj !== 'object') return
+					if (obj.totalProblemsSolved) totalSolved = Number(obj.totalProblemsSolved)
+					if (obj.total_problems_solved) totalSolved = Number(obj.total_problems_solved)
+					if (obj.totalSolved) totalSolved = Number(obj.totalSolved)
+					if (obj.problemsSolved) totalSolved = Number(obj.problemsSolved)
+					if (obj.codingScore) codingScore = Number(obj.codingScore)
+					if (obj.score) codingScore = Number(obj.score)
+					if (obj.instituteRank) instituteRank = Number(obj.instituteRank)
+					if (obj.institute_rank) instituteRank = Number(obj.institute_rank)
+					for (const value of Object.values(obj)) {
+						search(value, depth + 1)
+					}
+				}
+				search(jsonData)
+			} catch (e) {
+				// Ignore parse errors
+			}
+		}
+
+		// Fallback: look for embedded JSON-like content in HTML text
+		// Pattern: \"score\":1650,\"institute_rank\":3
+		if (!codingScore) {
+			const scoreMatch = html.match(/\\?"score\\?":\s*(\d+)/)
+			if (scoreMatch) codingScore = Number(scoreMatch[1])
+		}
+		
+		if (!instituteRank) {
+			const rankMatch = html.match(/\\?"institute_rank\\?":\s*(\d+)/)
+			if (rankMatch) instituteRank = Number(rankMatch[1])
+		}
+
+		// Fallback to regex patterns in HTML text
+		if (!totalSolved) {
+			const solvedMatch = html.match(/([0-9]{2,5})\s*problems?\s*solved/i) ||
+			                   html.match(/solved["\']?\s*:\s*["']?([0-9]+)/i) ||
+			                   html.match(/total[^0-9]*([0-9]{2,5})/i) ||
+			                   html.match(/>([0-9]{2,5})<\/[^>]*>\s*problems?/i)
+			if (solvedMatch) totalSolved = Number(solvedMatch[1])
+		}
+
+		// Regex patterns for coding score
+		if (!codingScore) {
+			const scoreMatch = html.match(/coding\s+score[^0-9]*([0-9]{3,5})/i) ||
+			                  html.match(/score["\']?\s*:\s*["']?([0-9]{3,5})/i) ||
+			                  html.match(/([0-9]{3,5})\s*(?:points?|score)/i) ||
+			                  html.match(/>([0-9]{3,5})<\/[^>]*>\s*(?:score|points)/i)
+			if (scoreMatch) codingScore = Number(scoreMatch[1])
+		}
+
+		// Regex patterns for institute rank
+		if (!instituteRank) {
+			const rankMatch = html.match(/institute\s+rank[^0-9]*([0-9]{1,7})/i) ||
+			                 html.match(/rank["\']?\s*:\s*["']?([0-9]{1,7})/i) ||
+			                 html.match(/ranking[^0-9]*([0-9]{1,7})/i) ||
+			                 html.match(/>([0-9]{1,7})<\/[^>]*>\s*(?:rank|ranking)/i)
+			if (rankMatch) instituteRank = Number(rankMatch[1])
+		}
 
 		// If we got nothing, consider it failed
 		if (!totalSolved && !codingScore) {

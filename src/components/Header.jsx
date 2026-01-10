@@ -15,13 +15,14 @@ const Header = ({ theme, toggleTheme }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navItems = ['Home', 'About', 'Projects', 'Skills', 'Education', 'Achievements', 'Contact'];
+  const navItems = ['Home', 'About', 'Coding Dashboard', 'Projects', 'Skills', 'Education', 'Achievements', 'Contact'];
 
   const handleNavClick = (item) => {
     if (item === 'Home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      document.getElementById(item.toLowerCase())?.scrollIntoView({ behavior: 'smooth' });
+      const id = item === 'Coding Dashboard' ? 'codingdashboard' : item.toLowerCase();
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     }
     setIsOpen(false);
   };

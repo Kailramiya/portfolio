@@ -188,29 +188,33 @@ function PlatformCard({
 				</div>
 			)}
 			{trendData && trendData.length > 1 && (
-				<div className="mt-4 -mx-2 -mb-2">
-					<div className="text-xs text-gray-600 dark:text-gray-400 mb-2 px-2">{trendLabel || 'Rating trend'}</div>
-					<div className="bg-gray-50 dark:bg-gray-800/40 rounded-lg border border-gray-100 dark:border-gray-800 overflow-hidden">
-						<ResponsiveContainer width="100%" height={180}>
-							<LineChart data={trendData.map((rating, i) => ({ contest: i + 1, rating }))}>
-								<CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.2)" vertical={false} />
+				<div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+					<div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-3">{trendLabel || 'Rating trend'}</div>
+					<div style={{ width: '100%', height: '200px', position: 'relative' }}>
+						<ResponsiveContainer width="100%" height="100%">
+							<LineChart 
+								data={trendData.map((rating, i) => ({ contest: i + 1, rating }))}
+								margin={{ top: 5, right: 10, bottom: 5, left: 0 }}
+							>
+								<CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.15)" vertical={false} />
 								<XAxis 
 									dataKey="contest" 
 									stroke="rgba(107, 114, 128, 0.5)" 
-									tick={{ fontSize: 11 }}
+									tick={{ fontSize: 10 }}
 									style={{ opacity: 0.7 }}
 								/>
 								<YAxis 
 									stroke="rgba(107, 114, 128, 0.5)" 
-									tick={{ fontSize: 11 }}
+									tick={{ fontSize: 10 }}
 									style={{ opacity: 0.7 }}
-									domain="dataMin - 10"
+									width={40}
 								/>
 								<Tooltip 
 									contentStyle={{ 
 										backgroundColor: 'rgba(17, 24, 39, 0.95)', 
 										border: '1px solid rgba(75, 85, 99, 0.3)',
-										borderRadius: '8px'
+										borderRadius: '6px',
+										padding: '8px 12px'
 									}}
 									labelStyle={{ color: '#9ca3af', fontSize: '12px' }}
 									formatter={(value) => [`${Math.round(value)}`, 'Rating']}
@@ -221,7 +225,7 @@ function PlatformCard({
 									dataKey="rating" 
 									stroke="#6366f1" 
 									dot={false}
-									strokeWidth={2.5}
+									strokeWidth={2}
 									isAnimationActive={false}
 								/>
 							</LineChart>
@@ -403,7 +407,7 @@ export default function CodingDashboard({
 	}, [linkHandles, normalized])
 
 	return (
-		<section id="coding" className="section-compact bg-gray-50 dark:bg-gray-800">
+		<section id="codingdashboard" className="section-compact bg-gray-50 dark:bg-gray-800">
 			<div className="container-custom section-padding">
 				<motion.div
 					initial={{ opacity: 0, y: 30 }}
