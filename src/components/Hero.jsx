@@ -13,7 +13,7 @@ const Hero = () => {
 
   const handleDownloadResume = () => {
     const link = document.createElement('a');
-    link.href = '/Aman_kumar_resume.pdf';
+    link.href = '/Aman_Kumar_Resume.pdf';
     link.download = 'Aman_Kumar_Resume.pdf';
     link.click();
   };
@@ -157,7 +157,8 @@ const Hero = () => {
               </motion.a>
 
               <motion.a
-                href="https://drive.google.com/file/d/1n8pNCzDOh591od94-xsP2JCSo8VpFUYu/view?usp=drive_link"
+                href="/Aman_Kumar_Resume.pdf"
+                // download
                 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
