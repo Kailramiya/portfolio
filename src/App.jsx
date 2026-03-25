@@ -2,6 +2,7 @@ import { useTheme } from './hooks/useTheme';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
+import Experience from './components/Experience';
 import CodingDashboard from './components/CodingDashboard';
 import Projects from './components/Projects';
 import Skills from './components/Skills';
@@ -18,6 +19,7 @@ function App() {
       <Header theme={theme} toggleTheme={toggleTheme} />
       <Hero />
       <About />
+      <Experience />
       <CodingDashboard />
       <Projects />
       <Skills />
@@ -25,12 +27,17 @@ function App() {
       <Achievements />
       <Contact />
       <ScrollToTopButton />
-      
-      <footer className="bg-gray-900 dark:bg-black text-white py-6">
-        <div className="container-custom section-padding text-center">
-          <p className="text-sm">&copy; 2026 Aman Kumar. All rights reserved.</p>
-          <p className="text-gray-400 text-xs mt-1">
-            Built with React, Vite, and Tailwind CSS
+
+      <footer className="relative bg-gray-950 text-white py-8 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900 to-gray-950" />
+        <div className="relative container-custom section-padding text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-primary-500" />
+            <span className="text-sm font-semibold gradient-text">Aman Kumar</span>
+            <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-purple-500" />
+          </div>
+          <p className="text-gray-500 text-xs">
+            Built with React, Vite & Tailwind CSS
           </p>
         </div>
       </footer>

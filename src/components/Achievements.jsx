@@ -1,9 +1,19 @@
 import { motion } from 'framer-motion';
-import { Trophy, Star, Target, Users, Code, Shield } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 
 const Achievements = () => {
-  const achievementIcons = [Trophy, Star, Target, Users, Code, Shield];
+  const achievements = portfolioData.achievements;
+
+  const gradients = [
+    "from-primary-500 to-blue-600",
+    "from-amber-500 to-orange-600",
+    "from-emerald-500 to-teal-600",
+    "from-red-500 to-pink-600",
+    "from-purple-500 to-indigo-600",
+    "from-cyan-500 to-blue-600",
+    "from-orange-500 to-red-600",
+    "from-teal-500 to-emerald-600",
+  ];
 
   return (
     <section id="achievements" className="section-compact bg-white dark:bg-gray-900">
@@ -15,69 +25,88 @@ const Achievements = () => {
           className="text-center section-margin"
         >
           <h2 className="text-3xl md:text-4xl font-bold gradient-text mb-3">
-            Achievements & Recognition
+            Achievements
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Recognition for excellence in competitive programming and technical leadership
+            Competitive programming milestones and recognition
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          {portfolioData.achievements.map((achievement, index) => {
-            const IconComponent = achievementIcons[index % achievementIcons.length];
-            
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ scale: 1.02, rotate: 0.5 }}
-                className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl p-4 shadow-lg hover:shadow-xl transition-all"
-              >
-                <div className="flex items-start gap-3">
-                  <motion.div
-                    whileHover={{ scale: 1.2, rotate: 10 }}
-                    className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center text-white flex-shrink-0"
-                  >
-                    <IconComponent size={20} />
-                  </motion.div>
-                  
-                  <div className="flex-1">
-                    <p className="text-gray-900 dark:text-white font-medium leading-relaxed text-sm">
-                      {achievement}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+        {/* Stats grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {achievements.slice(0, 4).map((achievement, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              className="relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700/50 shadow-md hover:shadow-xl transition-all p-5 text-center group"
+            >
+              {/* Background gradient on hover */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index]} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+
+              <div className={`text-3xl font-bold bg-gradient-to-br ${gradients[index]} bg-clip-text text-transparent mb-1`}>
+                {achievement.stat}
+              </div>
+              <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                {achievement.label}
+              </div>
+              <div className="text-[10px] text-gray-500 dark:text-gray-500">
+                {achievement.detail}
+              </div>
+            </motion.div>
+          ))}
         </div>
 
+        {/* Remaining achievements in smaller cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {achievements.slice(4).map((achievement, index) => (
+            <motion.div
+              key={index + 4}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.08 }}
+              whileHover={{ y: -3 }}
+              className="relative overflow-hidden rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700/50 p-4 text-center group"
+            >
+              <div className={`text-xl font-bold bg-gradient-to-br ${gradients[index + 4]} bg-clip-text text-transparent mb-0.5`}>
+                {achievement.stat}
+              </div>
+              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                {achievement.label}
+              </div>
+              <div className="text-[10px] text-gray-500 dark:text-gray-500 mt-0.5">
+                {achievement.detail}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Summary bar */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-8"
         >
-          <div className="bg-gradient-to-r from-primary-500 to-purple-600 rounded-xl p-6 text-white text-center">
-            <h3 className="text-xl font-bold mb-3">Competitive Programming Stats</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-r from-primary-600 via-purple-600 to-emerald-600 rounded-xl p-6 text-white">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold mb-1">350+</div>
-                <div className="text-primary-100 text-sm">LeetCode</div>
+                <div className="text-2xl font-bold mb-1">500+</div>
+                <div className="text-white/70 text-xs">LeetCode</div>
               </div>
               <div>
-                <div className="text-2xl font-bold mb-1">300+</div>
-                <div className="text-primary-100 text-sm">GeeksforGeeks</div>
+                <div className="text-2xl font-bold mb-1">400+</div>
+                <div className="text-white/70 text-xs">GeeksforGeeks</div>
               </div>
               <div>
                 <div className="text-2xl font-bold mb-1">50+</div>
-                <div className="text-primary-100 text-sm">Codeforces</div>
+                <div className="text-white/70 text-xs">Codeforces</div>
               </div>
               <div>
                 <div className="text-2xl font-bold mb-1">&lt;3K</div>
-                <div className="text-primary-100 text-sm">Global Rank</div>
+                <div className="text-white/70 text-xs">Global Rank</div>
               </div>
             </div>
           </div>

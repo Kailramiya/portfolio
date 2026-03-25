@@ -6,9 +6,13 @@
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
-    @apply transition-colors duration-300;
+    @apply transition-colors duration-300 antialiased;
+  }
+
+  ::selection {
+    @apply bg-primary-500/20 text-primary-900 dark:text-primary-100;
   }
 }
 
@@ -16,25 +20,63 @@
   .glass-effect {
     @apply bg-white/10 backdrop-blur-md border border-white/20;
   }
-  
+
   .gradient-text {
-    @apply bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary-600 via-purple-600 to-primary-600 bg-clip-text text-transparent;
   }
-  
+
   .section-padding {
     @apply px-4 sm:px-6 lg:px-8;
   }
-  
+
   .container-custom {
     @apply max-w-6xl mx-auto;
   }
-  
-  /* Compact spacing utilities */
+
   .section-compact {
-    @apply py-12 md:py-16;
+    @apply py-16 md:py-20;
   }
-  
+
   .section-margin {
-    @apply mb-8 md:mb-12;
+    @apply mb-10 md:mb-14;
+  }
+}
+
+@layer utilities {
+  /* Floating animations for hero */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-20px) scale(1.05); }
+  }
+
+  @keyframes float-delayed {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-15px) scale(1.03); }
+  }
+
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 8s ease-in-out infinite 2s;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 10s ease-in-out infinite 4s;
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 8s linear infinite;
   }
 }
