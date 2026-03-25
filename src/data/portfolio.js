@@ -2,7 +2,7 @@ export const portfolioData = {
   personal: {
     name: "Aman Kumar",
     title: "AI/ML Engineer & Software Developer",
-    email: "amankunduiiitr@gmail.com",
+    email: "officialamankundu@gmail.com",
     phone: "+91 9466460761",
     location: "Raichur, Karnataka",
     summary: "AI/ML Engineer pursuing B.Tech in Computer Science at IIIT Raichur. Experienced in NLP, transformer models, real-time computer vision systems, and scalable full-stack development. Currently building AI classification pipelines & multi-tenant platforms at QuickIntell. 1000+ DSA problems solved with global rank under 3000.",
