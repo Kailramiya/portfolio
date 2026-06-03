@@ -27,9 +27,12 @@ export const portfolioData = {
       color: "emerald",
       description: [
         "Integrated AI models for automated classification & scoring into real-time data processing pipelines on AWS, implementing configurable confidence thresholds to balance precision and recall",
-        "Built a multi-tenant platform with modular architecture and PostgreSQL, supporting data isolation and concurrent task execution for scalable ML model serving"
+        "Built a multi-tenant platform with modular architecture and PostgreSQL, supporting data isolation and concurrent task execution for scalable ML model serving",
+        "Engineered a production Medicare eligibility verification bot automating an 8-step EHR workflow across 5+ plan types, cutting per-batch manual processing time by ~70% across 50+ patient batch sessions",
+        "Integrated Amazon Bedrock Nova Pro vision model for dynamic OCR on live UI screenshots — extracting Member IDs and subscriber fields without hardcoded coordinates, making it resilient to UI layout changes",
+        "Designed a zero-trust security architecture: every AI inference call is proxied through an AWS Lambda function that validates JWT tokens (15-min TTL, 14-min heartbeat) and checks a real-time Appwrite blacklist before invoking Bedrock"
       ],
-      tech: ["Python", "AWS", "PostgreSQL", "FastAPI", "Docker"]
+      tech: ["Python", "AWS", "Amazon Bedrock", "PostgreSQL", "FastAPI", "PyAutoGUI", "Appwrite", "Docker"]
     },
     {
       id: 2,
@@ -50,6 +53,21 @@ export const portfolioData = {
   projects: [
     {
       id: 1,
+      title: "GetPrepFly – PTE Exam Practice Platform",
+      description: "Multi-tenant SaaS with AI-powered auto-scoring across 20+ question types, GPT-4o-mini grading in under 60s, and Razorpay-based B2B subscription monetization",
+      tech: ["Next.js 14", "PostgreSQL", "OpenAI Whisper", "GPT-4o-mini", "Razorpay", "JWT"],
+      features: [
+        "Architected multi-tenant SaaS supporting 20+ question types with subdomain-isolated environments and 4-role RBAC, serving individual students and B2B coaching centres",
+        "Integrated OpenAI Whisper and GPT-4o-mini to auto-score spoken and written responses across 6 dimensions within 60s, reducing manual grading overhead by ~80%",
+        "Built Razorpay subscription engine with modular plans, per-user rate limits, and centre-managed seat allocation for scalable B2B monetization without per-feature engineering overhead"
+      ],
+      period: "2025 – Present",
+      status: "Live",
+      github: "https://github.com/Kailramiya/DSIC",
+      demo: "https://getprepfly.com"
+    },
+    {
+      id: 3,
       title: "Empathy Engine – Emotionally Intelligent TTS",
       description: "Fine-tuned DistilRoBERTa for 7-class emotion classification with dynamic prosody modulation for emotionally expressive text-to-speech synthesis",
       tech: ["Python", "HuggingFace Transformers", "FastAPI", "Edge-TTS", "NLP"],
@@ -64,7 +82,7 @@ export const portfolioData = {
       demo: null
     },
     {
-      id: 2,
+      id: 4,
       title: "AI Security Monitoring System",
       description: "Real-time computer vision pipeline with multi-threaded frame processing, achieving 95% face recognition accuracy and 2.1x faster inference",
       tech: ["Python", "OpenCV", "YOLOv3", "Face Recognition", "Telegram API"],
@@ -79,7 +97,7 @@ export const portfolioData = {
       demo: "https://www.linkedin.com/posts/aman-kumar-6082321a9_python-facerecognition-computervision-activity-7342183270278647808-XEHT"
     },
     {
-      id: 3,
+      id: 5,
       title: "StayEase – Property Rental & Booking Platform",
       description: "Full-stack property rental platform with AI-assisted listing ranking, Redis caching, and end-to-end booking workflows",
       tech: ["React", "Node.js", "MongoDB", "Redis", "Express.js", "JWT"],
@@ -94,7 +112,7 @@ export const portfolioData = {
       demo: "https://stay-ease-frontend-one.vercel.app/"
     },
     {
-      id: 4,
+      id: 6,
       title: "NetworQ – Professional Networking Platform",
       description: "LinkedIn-inspired professional platform with RESTful APIs handling 1k+ daily requests with sub-150ms latency",
       tech: ["React.js", "Node.js", "MongoDB", "JWT", "Express.js"],
@@ -114,7 +132,7 @@ export const portfolioData = {
     "AI / ML": ["PyTorch", "HuggingFace", "OpenCV", "NumPy", "Pandas", "YOLOv3"],
     "Languages": ["Python", "C++", "Java", "JavaScript", "TypeScript", "SQL"],
     "Frontend": ["React", "Next.js", "Tailwind CSS", "HTML5", "CSS3"],
-    "Backend": ["FastAPI", "Node.js", "Express.js", "RESTful APIs", "JWT"],
+    "Backend": ["FastAPI", "Node.js", "Express.js", "RESTful APIs", "JWT", "System Design"],
     "Databases": ["PostgreSQL", "MongoDB", "MySQL", "Redis"],
     "Cloud & DevOps": ["AWS", "Docker", "Git", "Vercel", "Postman"]
   },
