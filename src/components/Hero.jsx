@@ -182,7 +182,9 @@ const Hero = () => {
                 </motion.a>
 
                 <motion.a
-                  href="/Aman_Kumar_Resume.pdf"
+                  href="https://drive.google.com/file/d/1ea46vqT8g096a69eNmWpKBoyEG7zxz0z/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-xl font-medium transition-all shadow-md hover:shadow-lg text-sm"
