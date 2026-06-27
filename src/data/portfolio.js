@@ -144,19 +144,22 @@ export const portfolioData = {
       title: "1000+ DSA Problems",
       detail: "Across LeetCode, Codeforces, GFG & CodeChef",
       stat: "1000+",
-      label: "Problems Solved"
+      label: "Problems Solved",
+      live: "totalSolved"
     },
     {
       title: "LeetCode Rating 1540",
       detail: "500+ problems solved on LeetCode",
       stat: "1540",
-      label: "LC Rating"
+      label: "LC Rating",
+      live: "leetcodeRating"
     },
     {
       title: "GFG Score 1422",
       detail: "400+ problems solved on GeeksforGeeks",
       stat: "1422",
-      label: "GFG Score"
+      label: "GFG Score",
+      live: "gfgScore"
     },
     {
       title: "Global Rank < 3000",
@@ -174,13 +177,15 @@ export const portfolioData = {
       title: "Codeforces Max 1130",
       detail: "Competitive programmer on Codeforces",
       stat: "1130",
-      label: "CF Max"
+      label: "CF Max",
+      live: "codeforcesMax"
     },
     {
       title: "CodeChef Max 1419",
       detail: "Competitive programmer on CodeChef",
       stat: "1419",
-      label: "CC Max"
+      label: "CC Max",
+      live: "codechefMax"
     },
     {
       title: "CGPA 8.16/10",

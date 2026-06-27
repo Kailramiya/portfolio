@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import {
 	ExternalLink,
@@ -8,41 +8,8 @@ import {
 	AlertCircle,
 	RefreshCw,
 } from 'lucide-react'
-import { portfolioData } from '../data/portfolio'
+import { useCodingStats } from '../hooks/useCodingStats'
 import TiltCard from './TiltCard'
-
-function lastPathSegment(url) {
-	if (!url) return ''
-	try {
-		const u = new URL(url)
-		const parts = u.pathname.split('/').filter(Boolean)
-		return (parts[parts.length - 1] || '').trim()
-	} catch {
-		return ''
-	}
-}
-
-function githubHandleFromUrl(url) {
-	if (!url) return ''
-	try {
-		const u = new URL(url)
-		if (u.hostname !== 'github.com') return ''
-		const parts = u.pathname.split('/').filter(Boolean)
-		return (parts[0] || '').trim()
-	} catch {
-		return ''
-	}
-}
-
-function buildStatsUrl(handles) {
-	const url = new URL('/api/coding-stats', window.location.origin)
-	for (const [key, value] of Object.entries(handles || {})) {
-		if (typeof value === 'string' && value.trim()) {
-			url.searchParams.set(key, value.trim())
-		}
-	}
-	return url.toString()
-}
 
 function SkeletonCard() {
 	return (
@@ -162,62 +129,7 @@ function PlatformCard({
 export default function CodingDashboard({
 	handles,
 }) {
-	const [data, setData] = useState(null)
-	const [loading, setLoading] = useState(true)
-	const [error, setError] = useState('')
-
-	const derivedHandles = useMemo(() => {
-		const links = portfolioData?.personal?.links || {}
-		return {
-			leetcode: lastPathSegment(links.leetcode),
-			codeforces: lastPathSegment(links.codeforces),
-			codechef: lastPathSegment(links.codechef),
-			gfg: lastPathSegment(links.gfg),
-			github: githubHandleFromUrl(links.github),
-		}
-	}, [])
-
-	const mergedHandles = useMemo(() => {
-		return { ...derivedHandles, ...(handles || {}) }
-	}, [derivedHandles, handles])
-
-	// Use local handles for profile links so they're visible even if the API fails.
-	const linkHandles = mergedHandles
-
-	const url = useMemo(() => {
-		if (typeof window === 'undefined') return ''
-		return buildStatsUrl(mergedHandles)
-	}, [mergedHandles])
-
-	async function load() {
-		setLoading(true)
-		setError('')
-
-		try {
-			const res = await fetch(url || '/api/coding-stats', {
-				headers: { 'Accept': 'application/json' },
-			})
-			const body = await res.json().catch(() => null)
-
-			if (!res.ok) {
-				const message = body?.error || 'Failed to load stats'
-				throw new Error(message)
-			}
-
-			setData(body)
-		} catch (e) {
-			setData(null)
-			setError(e?.message || 'Failed to load stats')
-		} finally {
-			setLoading(false)
-		}
-	}
-
-	useEffect(() => {
-		if (typeof window === 'undefined') return
-		load()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [url])
+	const { data, loading, error, reload, handles: linkHandles } = useCodingStats(handles)
 
 	const normalized = data?.normalized || {}
 	const handlesOut = data?.handles || {}
@@ -365,7 +277,7 @@ export default function CodingDashboard({
 									<div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{error}</div>
 								</div>
 								<motion.button
-									onClick={load}
+									onClick={reload}
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
 									className="inline-flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"

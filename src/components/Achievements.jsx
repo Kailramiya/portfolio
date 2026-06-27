@@ -1,9 +1,45 @@
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { portfolioData } from '../data/portfolio';
 import TiltCard from './TiltCard';
+import { useCodingStats } from '../hooks/useCodingStats';
 
 const Achievements = () => {
   const achievements = portfolioData.achievements;
+
+  // Live ratings/scores from the same API the Coding Dashboard uses, so these
+  // never go stale. Falls back to the value in portfolio.js if the API fails.
+  const { data } = useCodingStats();
+  const normalized = data?.normalized || {};
+
+  const totalSolved = useMemo(() => {
+    const vals = [
+      normalized?.leetcode?.solved?.total,
+      normalized?.codeforces?.solved?.total,
+      normalized?.codechef?.solved?.total,
+      normalized?.geeksforgeeks?.totalSolved,
+    ]
+      .map(Number)
+      .filter(Number.isFinite);
+    if (!vals.length) return null;
+    return vals.reduce((a, b) => a + b, 0);
+  }, [normalized]);
+
+  const liveValues = {
+    totalSolved,
+    leetcodeRating: normalized?.leetcode?.contest?.rating,
+    gfgScore: normalized?.geeksforgeeks?.codingScore,
+    codeforcesMax: normalized?.codeforces?.maxRating,
+    codechefMax: normalized?.codechef?.maxRating ?? normalized?.codechef?.rating,
+  };
+
+  const resolveStat = (a) => {
+    if (a.live) {
+      const v = liveValues[a.live];
+      if (v != null && Number.isFinite(Number(v))) return String(v);
+    }
+    return a.stat;
+  };
 
   const gradients = [
     "from-primary-500 to-blue-600",
@@ -49,7 +85,7 @@ const Achievements = () => {
               <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index]} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
 
               <div className={`text-3xl font-bold bg-gradient-to-br ${gradients[index]} bg-clip-text text-transparent mb-1`}>
-                {achievement.stat}
+                {resolveStat(achievement)}
               </div>
               <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
                 {achievement.label}
@@ -73,7 +109,7 @@ const Achievements = () => {
               className="relative overflow-hidden rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700/50 p-4 text-center group"
             >
               <div className={`text-xl font-bold bg-gradient-to-br ${gradients[index + 4]} bg-clip-text text-transparent mb-0.5`}>
-                {achievement.stat}
+                {resolveStat(achievement)}
               </div>
               <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
                 {achievement.label}
@@ -95,15 +131,15 @@ const Achievements = () => {
           <div className="bg-gradient-to-r from-primary-600 via-purple-600 to-emerald-600 rounded-xl p-6 text-white">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold mb-1">500+</div>
+                <div className="text-2xl font-bold mb-1">{normalized?.leetcode?.solved?.total ?? '500+'}</div>
                 <div className="text-white/70 text-xs">LeetCode</div>
               </div>
               <div>
-                <div className="text-2xl font-bold mb-1">400+</div>
+                <div className="text-2xl font-bold mb-1">{normalized?.geeksforgeeks?.totalSolved ?? '400+'}</div>
                 <div className="text-white/70 text-xs">GeeksforGeeks</div>
               </div>
               <div>
-                <div className="text-2xl font-bold mb-1">50+</div>
+                <div className="text-2xl font-bold mb-1">{normalized?.codeforces?.solved?.total ?? '50+'}</div>
                 <div className="text-white/70 text-xs">Codeforces</div>
               </div>
               <div>
