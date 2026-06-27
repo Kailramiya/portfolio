@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { portfolioData } from '../data/portfolio';
+import TiltCard from './TiltCard';
 
 const Achievements = () => {
   const achievements = portfolioData.achievements;
@@ -35,8 +36,9 @@ const Achievements = () => {
         {/* Stats grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {achievements.slice(0, 4).map((achievement, index) => (
-            <motion.div
+            <TiltCard
               key={index}
+              max={9}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -55,7 +57,7 @@ const Achievements = () => {
               <div className="text-[10px] text-gray-500 dark:text-gray-500">
                 {achievement.detail}
               </div>
-            </motion.div>
+            </TiltCard>
           ))}
         </div>
 

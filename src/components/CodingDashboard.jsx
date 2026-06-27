@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import {
 	ExternalLink,
 	Github,
@@ -10,37 +9,7 @@ import {
 	RefreshCw,
 } from 'lucide-react'
 import { portfolioData } from '../data/portfolio'
-
-function Sparkline({ points, color = '#10b981', width = 140, height = 44 }) {
-	if (!Array.isArray(points) || points.length < 2) return null
-	const min = Math.min(...points)
-	const max = Math.max(...points)
-	const span = max - min || 1
-	const pad = 4
-	const usableWidth = width - pad * 2
-	const usableHeight = height - pad * 2
-	const coords = points.map((v, i) => {
-		const x = (i / (points.length - 1)) * usableWidth + pad
-		const y = height - pad - ((v - min) / span) * usableHeight
-		return `${x},${y}`
-	})
-	const lastPoint = coords[coords.length - 1]?.split(',').map(Number)
-
-	return (
-		<svg width={width} height={height} role="img" aria-label="Rating trend" className="overflow-visible">
-			<polyline
-				fill="none"
-				stroke={color}
-				strokeWidth="2.5"
-				strokeLinecap="round"
-				points={coords.join(' ')}
-			/>
-			{lastPoint && (
-				<circle cx={lastPoint[0]} cy={lastPoint[1]} r="3" fill={color} />
-			)}
-		</svg>
-	)
-}
+import TiltCard from './TiltCard'
 
 function lastPathSegment(url) {
 	if (!url) return ''
@@ -109,13 +78,12 @@ function PlatformCard({
 	primaryLabel,
 	stats = [],
 	status,
-	trendLabel,
-	trendData,
 }) {
 	const Icon = icon
 
 	return (
-		<motion.div
+		<TiltCard
+			max={6}
 			initial={{ opacity: 0, y: 20 }}
 			whileInView={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
@@ -187,53 +155,7 @@ function PlatformCard({
 					</motion.a>
 				</div>
 			)}
-			{trendData && trendData.length > 1 && (
-				<div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-					<div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-3">{trendLabel || 'Rating trend'}</div>
-					<div style={{ width: '100%', height: '200px', position: 'relative' }}>
-						<ResponsiveContainer width="100%" height="100%">
-							<LineChart 
-								data={trendData.map((rating, i) => ({ contest: i + 1, rating }))}
-								margin={{ top: 5, right: 10, bottom: 5, left: 0 }}
-							>
-								<CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.15)" vertical={false} />
-								<XAxis 
-									dataKey="contest" 
-									stroke="rgba(107, 114, 128, 0.5)" 
-									tick={{ fontSize: 10 }}
-									style={{ opacity: 0.7 }}
-								/>
-								<YAxis 
-									stroke="rgba(107, 114, 128, 0.5)" 
-									tick={{ fontSize: 10 }}
-									style={{ opacity: 0.7 }}
-									width={40}
-								/>
-								<Tooltip 
-									contentStyle={{ 
-										backgroundColor: 'rgba(17, 24, 39, 0.95)', 
-										border: '1px solid rgba(75, 85, 99, 0.3)',
-										borderRadius: '6px',
-										padding: '8px 12px'
-									}}
-									labelStyle={{ color: '#9ca3af', fontSize: '12px' }}
-									formatter={(value) => [`${Math.round(value)}`, 'Rating']}
-									labelFormatter={(label) => `Contest ${label}`}
-								/>
-								<Line 
-									type="monotone" 
-									dataKey="rating" 
-									stroke="#6366f1" 
-									dot={false}
-									strokeWidth={2}
-									isAnimationActive={false}
-								/>
-							</LineChart>
-						</ResponsiveContainer>
-					</div>
-				</div>
-			)}
-		</motion.div>
+		</TiltCard>
 	)
 }
 
@@ -333,8 +255,6 @@ export default function CodingDashboard({
 					{ label: 'Hard', value: leetcode?.solved?.hard ?? '—' },
 					{ label: 'Contest rating', value: leetcode?.contest?.rating ?? '—' },
 				],
-				trendLabel: 'Contest rating trend',
-				trendData: leetcode?.trend?.rating || [],
 				status: leetcode ? 'ok' : null,
 			},
 			{
@@ -352,8 +272,6 @@ export default function CodingDashboard({
 					{ label: 'Max rank', value: codeforces?.maxRank ?? '—' },
 					{ label: 'Contests', value: codeforces?.contestsCount ?? '—' },
 				],
-				trendLabel: 'Contest rating trend',
-				trendData: codeforces?.trend?.rating || [],
 				status: codeforces ? 'ok' : null,
 			},
 			{
@@ -485,4 +403,3 @@ export default function CodingDashboard({
 		</section>
 	)
 }
-

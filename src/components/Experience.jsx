@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Briefcase, Calendar, MapPin } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
+import TiltCard from './TiltCard';
 
 const Experience = () => {
   const { experience } = portfolioData;
@@ -63,7 +64,8 @@ const Experience = () => {
                   </div>
 
                   {/* Card */}
-                  <motion.div
+                  <TiltCard
+                    max={5}
                     whileHover={{ y: -3 }}
                     className="bg-white dark:bg-gray-900 rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden border border-gray-100 dark:border-gray-700/50"
                   >
@@ -113,7 +115,7 @@ const Experience = () => {
                         ))}
                       </div>
                     </div>
-                  </motion.div>
+                  </TiltCard>
                 </motion.div>
               );
             })}

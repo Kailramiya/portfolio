@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { portfolioData } from '../data/portfolio';
 import { Brain, Code, Database, Zap, Server, Eye } from 'lucide-react';
+import TiltCard from './TiltCard';
 
 const About = () => {
   const highlights = [
@@ -92,8 +93,9 @@ const About = () => {
             className="grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
             {highlights.map((item, index) => (
-              <motion.div
+              <TiltCard
                 key={index}
+                max={8}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -109,7 +111,7 @@ const About = () => {
                 <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                   {item.description}
                 </p>
-              </motion.div>
+              </TiltCard>
             ))}
           </motion.div>
         </div>

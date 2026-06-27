@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { portfolioData } from '../data/portfolio';
 import { Brain, Code, Monitor, Server, Database, Cloud } from 'lucide-react';
+import TiltCard from './TiltCard';
 
 const categoryIcons = {
   "AI / ML": Brain,
@@ -46,8 +47,9 @@ const Skills = () => {
             const gradient = categoryGradients[category] || "from-gray-500 to-gray-600";
 
             return (
-              <motion.div
+              <TiltCard
                 key={category}
+                max={6}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.08 }}
@@ -79,7 +81,7 @@ const Skills = () => {
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </TiltCard>
             );
           })}
         </div>
