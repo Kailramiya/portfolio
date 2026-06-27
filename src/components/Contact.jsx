@@ -15,7 +15,8 @@ const Contact = () => {
     name: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
+    company: '' // honeypot — must stay empty for real users
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,6 +41,7 @@ const Contact = () => {
           email: formData.email,
           subject: formData.subject,
           message: formData.message,
+          company: formData.company,
         }),
       });
 
@@ -159,6 +161,20 @@ const Contact = () => {
               </h3>
 
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Honeypot field — hidden from real users, bots tend to fill it */}
+                <div className="absolute left-[-9999px] top-[-9999px]" aria-hidden="true">
+                  <label htmlFor="company">Company (leave blank)</label>
+                  <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleInputChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Name</label>

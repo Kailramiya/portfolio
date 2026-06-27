@@ -5,7 +5,7 @@ export const portfolioData = {
     email: "officialamankundu@gmail.com",
     phone: "+91 9466460761",
     location: "Raichur, Karnataka",
-    summary: "AI/ML Engineer pursuing B.Tech in Computer Science at IIIT Raichur. Experienced in NLP, transformer models, real-time computer vision systems, and scalable full-stack development. Currently building AI classification pipelines & multi-tenant platforms at QuickIntell. 1000+ DSA problems solved with global rank under 3000.",
+    summary: "AI/ML Engineer pursuing B.Tech in Computer Science at IIIT Raichur. Experienced in NLP, transformer models, real-time computer vision systems, and scalable full-stack development. Currently building healthcare RPA automation bots, AI classification pipelines & multi-tenant platforms at QuickIntell. 1000+ DSA problems solved with global rank under 3000.",
     links: {
       linkedin: "https://www.linkedin.com/in/aman-kumar-6082321a9",
       github: "https://github.com/Kailramiya",
@@ -26,13 +26,15 @@ export const portfolioData = {
       status: "active",
       color: "emerald",
       description: [
-        "Integrated AI models for automated classification & scoring into real-time data processing pipelines on AWS, implementing configurable confidence thresholds to balance precision and recall",
-        "Built a multi-tenant platform with modular architecture and PostgreSQL, supporting data isolation and concurrent task execution for scalable ML model serving",
-        "Engineered a production Medicare eligibility verification bot automating an 8-step EHR workflow across 5+ plan types, cutting per-batch manual processing time by ~70% across 50+ patient batch sessions",
-        "Integrated Amazon Bedrock Nova Pro vision model for dynamic OCR on live UI screenshots — extracting Member IDs and subscriber fields without hardcoded coordinates, making it resilient to UI layout changes",
-        "Designed a zero-trust security architecture: every AI inference call is proxied through an AWS Lambda function that validates JWT tokens (15-min TTL, 14-min heartbeat) and checks a real-time Appwrite blacklist before invoking Bedrock"
+        "Architected and shipped a production RPA suite of Windows automation bots that verify insurance eligibility & benefits (EVBV) across 3 major U.S. healthcare payers — BCBS California, Kaiser, and Medicare — replacing a fully manual analyst workflow for the client",
+        "Automated the end-to-end 8-step pipeline per account: 2FA Windows Virtual Desktop login → Raintree EHR navigation → Waystar/Availity eligibility pull → plan classification → template population → task creation, cutting per-batch manual processing time by ~70% across 50+ patient batch sessions",
+        "Built plan-type intelligence that auto-classifies QMB, Traditional Medicare, Medicare Advantage, and Medicare Secondary coverage and applies the correct documentation template or follow-up task — removing analyst decision-making and standardizing output quality",
+        "Integrated Amazon Bedrock Nova Pro vision model for coordinate-free OCR on live UI screenshots — extracting Member IDs, deductibles, and therapy benefit amounts straight from the screen, making the bots resilient to EHR/portal layout changes",
+        "Designed a zero-trust security architecture: every AI inference call is proxied through an AWS Lambda that validates short-lived JWTs (15-min TTL, 14-min heartbeat) and checks a real-time Appwrite blacklist before invoking Bedrock",
+        "Packaged each bot as an obfuscated standalone Windows EXE (Nuitka + PyArmor) with per-client licensing, a remote kill-switch, and an admin activity-monitoring dashboard for fleet oversight across client laptops",
+        "Integrated AI classification & scoring into real-time pipelines on AWS with configurable confidence thresholds, served from a multi-tenant PostgreSQL platform supporting data isolation and concurrent task execution"
       ],
-      tech: ["Python", "AWS", "Amazon Bedrock", "PostgreSQL", "FastAPI", "PyAutoGUI", "Appwrite", "Docker"]
+      tech: ["Python", "AWS", "Amazon Bedrock", "AWS Lambda", "PostgreSQL", "PyAutoGUI", "OCR", "Nuitka", "Appwrite", "Docker"]
     },
     {
       id: 2,
@@ -54,12 +56,12 @@ export const portfolioData = {
     {
       id: 1,
       title: "GetPrepFly – PTE Exam Practice Platform",
-      description: "Multi-tenant SaaS with AI-powered auto-scoring across 20+ question types, GPT-4o-mini grading in under 60s, and Razorpay-based B2B subscription monetization",
-      tech: ["Next.js 14", "PostgreSQL", "OpenAI Whisper", "GPT-4o-mini", "Razorpay", "JWT"],
+      description: "Multi-tenant PTE prep SaaS auto-scoring all 26 PTE question types with OpenAI Whisper + GPT-4o-mini in under 60s, with a React Native mobile app and Razorpay-based B2B monetization",
+      tech: ["Next.js 14", "React Native", "PostgreSQL", "Prisma", "OpenAI Whisper", "GPT-4o-mini", "Razorpay", "Upstash Redis"],
       features: [
-        "Architected multi-tenant SaaS supporting 20+ question types with subdomain-isolated environments and 4-role RBAC, serving individual students and B2B coaching centres",
-        "Integrated OpenAI Whisper and GPT-4o-mini to auto-score spoken and written responses across 6 dimensions within 60s, reducing manual grading overhead by ~80%",
-        "Built Razorpay subscription engine with modular plans, per-user rate limits, and centre-managed seat allocation for scalable B2B monetization without per-feature engineering overhead"
+        "Architected a multi-tenant SaaS across 77+ API routes with 4-role RBAC (Super Admin, Centre Admin, Teacher, Student) plus per-centre isolation, branding, and question banks — serving both individual students and B2B coaching centres",
+        "Built AI auto-grading for all 26 PTE question types using OpenAI Whisper (speech-to-text) + GPT-4o-mini, returning scored feedback with per-error corrections in under 60s; pinned temperature (0.2) and a fixed seed for repeatable scores and kept answer keys server-side to block cheating",
+        "Engineered Razorpay monetization with HMAC-verified payments, modular per-module plans, a coupon engine, and 30-day rolling per-student seat allocation for centres — backed by Upstash Redis rate limiting (20 AI calls/min/user)"
       ],
       period: "2025 – Present",
       status: "Live",
@@ -67,14 +69,14 @@ export const portfolioData = {
       demo: "https://getprepfly.com"
     },
     {
-      id: 3,
+      id: 2,
       title: "Empathy Engine – Emotionally Intelligent TTS",
-      description: "Fine-tuned DistilRoBERTa for 7-class emotion classification with dynamic prosody modulation for emotionally expressive text-to-speech synthesis",
-      tech: ["Python", "HuggingFace Transformers", "FastAPI", "Edge-TTS", "NLP"],
+      description: "Emotion-aware multilingual text-to-speech that classifies emotion in text with a DistilRoBERTa transformer and modulates voice prosody for expressive English, Hindi & Hinglish speech",
+      tech: ["Python", "HuggingFace Transformers", "FastAPI", "Edge-TTS", "PyTorch", "VADER"],
       features: [
-        "Fine-tuned DistilRoBERTa for 7-class emotion classification (joy, anger, sadness, fear, surprise, disgust, neutral) with confidence-based intensity scaling",
-        "Built multilingual processing with auto Hindi/Hinglish detection via Devanagari script analysis, supporting emotion analysis across 3 languages",
-        "Designed dynamic prosody modulation mapping emotions to vocal parameters (rate, pitch, volume) with triple-fallback TTS architecture"
+        "Integrated a DistilRoBERTa transformer for 7-class emotion detection (joy, anger, sadness, fear, surprise, disgust, neutral), using model confidence to scale emotional intensity",
+        "Built confidence-scaled prosody modulation mapping emotion to speech rate (−40%/+35%), pitch (−30/+35 Hz) and volume (−25%/+40%) over Microsoft Neural Voices, with a pyttsx3 offline fallback and VADER sentiment fallback",
+        "Added Hindi/Hinglish support via Devanagari (U+0900–097F) script detection and a Google-Translate pipeline, exposed through both a FastAPI REST API and a web UI"
       ],
       period: "2025",
       status: "Completed",
@@ -82,14 +84,14 @@ export const portfolioData = {
       demo: null
     },
     {
-      id: 4,
+      id: 3,
       title: "AI Security Monitoring System",
-      description: "Real-time computer vision pipeline with multi-threaded frame processing, achieving 95% face recognition accuracy and 2.1x faster inference",
-      tech: ["Python", "OpenCV", "YOLOv3", "Face Recognition", "Telegram API"],
+      description: "Real-time webcam surveillance that recognizes faces against a dual family/visitor database (dlib) and pushes instant Telegram photo alerts, with multi-threaded capture and recognition",
+      tech: ["Python", "OpenCV", "face_recognition (dlib)", "asyncio", "Telegram Bot API"],
       features: [
-        "Built real-time CV pipeline with multi-threaded frame processing, achieving 95% face recognition accuracy and 2.1x faster inference",
-        "Reduced false positives by 40% through optimized face embedding techniques and intelligent frame sampling",
-        "Integrated real-time Telegram alerts with sub-second latency for automated incident reporting"
+        "Built a real-time CV pipeline with multi-threaded frame capture and a dedicated recognition thread, encoding faces via the dlib-based face_recognition library against a pre-loaded family database",
+        "Designed a visitor-learning system that archives unknown faces into per-visitor folders so repeat visitors are auto-recognized, with a 60s alert cooldown to cut alert fatigue",
+        "Integrated an async (asyncio) Telegram bot that sends live photo alerts on unknown-visitor detection and lets the user tag and categorize visitors over chat"
       ],
       period: "Aug 2024 – Nov 2024",
       status: "Completed",
@@ -97,14 +99,14 @@ export const portfolioData = {
       demo: "https://www.linkedin.com/posts/aman-kumar-6082321a9_python-facerecognition-computervision-activity-7342183270278647808-XEHT"
     },
     {
-      id: 5,
+      id: 4,
       title: "StayEase – Property Rental & Booking Platform",
-      description: "Full-stack property rental platform with AI-assisted listing ranking, Redis caching, and end-to-end booking workflows",
-      tech: ["React", "Node.js", "MongoDB", "Redis", "Express.js", "JWT"],
+      description: "Full-stack property rental & booking platform with a weighted ranking engine, Redis-cached search, Cloudinary uploads, and end-to-end booking with date-conflict detection",
+      tech: ["React 19", "Node.js", "Express", "MongoDB", "Redis", "Cloudinary"],
       features: [
-        "Implemented AI-assisted ranking & recommendation using weighted scoring based on user behavior signals",
-        "Optimized backend with Redis caching for read-heavy APIs to improve search and listing performance",
-        "Built secure authentication using JWT with httpOnly cookies and admin-ready modular REST APIs"
+        "Built a transparent ranking engine scoring listings on rating (35%), price competitiveness (25%), demand signals — views + bookings (25%), and availability (15%), surfacing 'Best Value' / 'High Demand' labels",
+        "Optimized read-heavy search/listing APIs with a Redis cache layer (60s TTL) and prefix-based invalidation on create/update/delete to keep results fresh",
+        "Secured auth with JWT in httpOnly cookies (with header fallback) and role-based admin middleware across modular REST routes for properties, bookings, payments, reviews and favorites"
       ],
       period: "Sep 2024 – Present",
       status: "Live",
@@ -112,14 +114,14 @@ export const portfolioData = {
       demo: "https://stay-ease-frontend-one.vercel.app/"
     },
     {
-      id: 6,
+      id: 5,
       title: "NetworQ – Professional Networking Platform",
-      description: "LinkedIn-inspired professional platform with RESTful APIs handling 1k+ daily requests with sub-150ms latency",
-      tech: ["React.js", "Node.js", "MongoDB", "JWT", "Express.js"],
+      description: "LinkedIn-inspired social platform with JWT-authenticated profiles and a post feed, on a modular Express/MongoDB backend and a React 18 + Zustand frontend",
+      tech: ["React 18", "Node.js", "Express", "MongoDB", "Zustand", "JWT"],
       features: [
-        "Designed RESTful APIs handling 1k+ daily requests with sub-150ms latency, improving availability by 22%",
-        "Implemented JWT-based auth with OOP principles and separation of concerns in backend design",
-        "Built responsive React.js frontend with protected routing and real-time messaging"
+        "Implemented JWT authentication with bcryptjs password hashing and token validation guarding protected API routes",
+        "Built a modular Express + MongoDB (Mongoose) backend with clean separation of controllers, models, routes and middleware for profiles and posts",
+        "Developed a responsive React 18 frontend with protected routing, Zustand state management, and Tailwind CSS"
       ],
       period: "Aug 2024 – Present",
       status: "Live",

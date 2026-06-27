@@ -2,6 +2,32 @@ import nodemailer from 'nodemailer'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// Best-effort in-memory rate limiter. Survives within a warm serverless
+// instance; not a substitute for a shared store (KV/Upstash) at high scale,
+// but enough to stop casual abuse / email-bombing of this contact form.
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
+const RATE_LIMIT_MAX = 5 // max submissions per IP per window
+const hits = new Map() // ip -> number[] (timestamps)
+
+function getClientIp(req) {
+  const fwd = req.headers['x-forwarded-for']
+  if (typeof fwd === 'string' && fwd.length) return fwd.split(',')[0].trim()
+  return req.socket?.remoteAddress || 'unknown'
+}
+
+function isRateLimited(ip, now) {
+  const recent = (hits.get(ip) || []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS)
+  recent.push(now)
+  hits.set(ip, recent)
+  // Opportunistic cleanup so the Map doesn't grow unbounded.
+  if (hits.size > 5000) {
+    for (const [key, times] of hits) {
+      if (!times.some((t) => now - t < RATE_LIMIT_WINDOW_MS)) hits.delete(key)
+    }
+  }
+  return recent.length > RATE_LIMIT_MAX
+}
+
 function asString(value) {
   if (typeof value !== 'string') return ''
   return value
@@ -50,10 +76,17 @@ export default async function handler(req, res) {
     const rawBody = req.body
     const body = typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody || {}
 
-    // Honeypot (spam trap): must be empty
+    // Honeypot (spam trap): must be empty. Return a fake success so bots
+    // can't tell they were caught.
     const company = asString(body.company)
     if (company) {
       return json(res, 200, { ok: true })
+    }
+
+    // Rate limit per IP to prevent spam / email-bombing / auto-reply abuse.
+    const ip = getClientIp(req)
+    if (isRateLimited(ip, Date.now())) {
+      return json(res, 429, { ok: false, error: 'Too many requests. Please try again later.' })
     }
 
     const name = asString(body.name).trim()

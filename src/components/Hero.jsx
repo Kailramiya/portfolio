@@ -12,7 +12,7 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Animated background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950" />
 
@@ -182,9 +182,10 @@ const Hero = () => {
                 </motion.a>
 
                 <motion.a
-                  href="https://drive.google.com/file/d/1ea46vqT8g096a69eNmWpKBoyEG7zxz0z/view?usp=sharing"
+                  href="/Aman_Kumar_Resume.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
+                  download
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-xl font-medium transition-all shadow-md hover:shadow-lg text-sm"

@@ -13,7 +13,7 @@ const About = () => {
     {
       icon: Eye,
       title: "Computer Vision",
-      description: "Real-time CV systems with 95% recognition accuracy",
+      description: "Real-time face recognition with multi-threaded video & alerts",
       gradient: "from-emerald-500 to-teal-600",
     },
     {
@@ -79,8 +79,8 @@ const About = () => {
                 <div className="text-xs text-gray-600 dark:text-gray-400">Throughput Boost</div>
               </div>
               <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                <div className="text-2xl font-bold gradient-text">95%</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">CV Accuracy</div>
+                <div className="text-2xl font-bold gradient-text">26</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">PTE Question Types</div>
               </div>
             </div>
           </motion.div>
