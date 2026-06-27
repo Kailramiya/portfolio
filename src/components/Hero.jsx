@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Github, Linkedin, Mail, Phone, MapPin, Download, ChevronDown } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 
@@ -12,10 +12,39 @@ const Hero = () => {
   // Only mount the WebGL scene when motion is welcome — respects
   // prefers-reduced-motion and skips the heavy bundle for those users.
   const [show3D, setShow3D] = useState(false);
+  // Pointer-driven 3D parallax for the hero content (photo + text panel).
+  // Disabled on touch and reduced-motion so it never feels broken.
+  const [tiltEnabled, setTiltEnabled] = useState(false);
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
     setShow3D(!reduced);
+    setTiltEnabled(!reduced && !coarse);
   }, []);
+
+  // Raw pointer offset (-0.5..0.5), smoothed through springs.
+  const mvX = useMotionValue(0);
+  const mvY = useMotionValue(0);
+  const springCfg = { stiffness: 120, damping: 18, mass: 0.4 };
+  const sx = useSpring(mvX, springCfg);
+  const sy = useSpring(mvY, springCfg);
+
+  // Photo tilts boldly; the text panel drifts on the same perspective gently.
+  const photoRotateY = useTransform(sx, [-0.5, 0.5], [-16, 16]);
+  const photoRotateX = useTransform(sy, [-0.5, 0.5], [16, -16]);
+  const contentRotateY = useTransform(sx, [-0.5, 0.5], [6, -6]);
+  const contentRotateX = useTransform(sy, [-0.5, 0.5], [-4, 4]);
+
+  const handlePointer = (e) => {
+    if (!tiltEnabled) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    mvX.set((e.clientX - r.left) / r.width - 0.5);
+    mvY.set((e.clientY - r.top) / r.height - 0.5);
+  };
+  const resetPointer = () => {
+    mvX.set(0);
+    mvY.set(0);
+  };
 
   const socialLinks = [
     { icon: Github, href: personal.links.github, label: 'GitHub' },
@@ -48,16 +77,22 @@ const Hero = () => {
       )}
 
       <div className="relative z-10 container-custom section-padding">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div
+          className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+          style={{ perspective: 1200 }}
+          onMouseMove={handlePointer}
+          onMouseLeave={resetPointer}
+        >
 
           {/* Left Side - Photo */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
+            style={{ rotateX: photoRotateX, rotateY: photoRotateY, transformStyle: 'preserve-3d' }}
             className="flex justify-center lg:justify-end order-1 lg:order-1"
           >
-            <div className="relative group">
+            <div className="relative group" style={{ transformStyle: 'preserve-3d' }}>
               {/* Outer glow ring */}
               <div className="absolute -inset-4 bg-gradient-to-r from-primary-500 via-purple-500 to-emerald-500 rounded-full opacity-20 group-hover:opacity-40 blur-2xl transition-opacity duration-700" />
 
@@ -77,10 +112,12 @@ const Hero = () => {
                 />
               </motion.div>
 
-              {/* Floating badges */}
+              {/* Floating badges — pushed forward on the Z axis so they
+                  visibly hover above the photo as the card tilts */}
               <motion.div
                 animate={{ y: [-5, 5, -5] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                style={{ z: 70 }}
                 className="absolute -top-2 -right-2 z-20 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-100 dark:border-gray-700"
               >
                 <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">SDE Intern</span>
@@ -89,6 +126,7 @@ const Hero = () => {
               <motion.div
                 animate={{ y: [5, -5, 5] }}
                 transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                style={{ z: 55 }}
                 className="absolute -bottom-2 -left-2 z-20 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-100 dark:border-gray-700"
               >
                 <span className="text-xs font-bold text-primary-600 dark:text-primary-400">AI/ML</span>
@@ -101,6 +139,7 @@ const Hero = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
+            style={{ rotateX: contentRotateX, rotateY: contentRotateY, transformStyle: 'preserve-3d' }}
             className="text-center lg:text-left space-y-5 order-2 lg:order-2"
           >
             {/* Status badge */}
