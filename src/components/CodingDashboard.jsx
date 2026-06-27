@@ -165,7 +165,7 @@ export default function CodingDashboard({
 					{ label: 'Easy', value: leetcode?.solved?.easy ?? '—' },
 					{ label: 'Medium', value: leetcode?.solved?.medium ?? '—' },
 					{ label: 'Hard', value: leetcode?.solved?.hard ?? '—' },
-					{ label: 'Contest rating', value: leetcode?.contest?.rating ?? '—' },
+					{ label: 'Contest rating', value: leetcode?.contest?.rating != null ? Math.round(leetcode.contest.rating) : '—' },
 				],
 				status: leetcode ? 'ok' : null,
 			},

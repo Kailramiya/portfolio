@@ -35,8 +35,8 @@ const Achievements = () => {
 
   const resolveStat = (a) => {
     if (a.live) {
-      const v = liveValues[a.live];
-      if (v != null && Number.isFinite(Number(v))) return String(v);
+      const v = Number(liveValues[a.live]);
+      if (Number.isFinite(v)) return String(Math.round(v));
     }
     return a.stat;
   };
