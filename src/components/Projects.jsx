@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Github, ExternalLink, Calendar, ChevronRight } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
+import TiltCard from './TiltCard';
 
 const projectGradients = [
   "from-purple-500 to-indigo-600",
@@ -36,12 +37,12 @@ const Projects = () => {
             const isExpanded = expandedId === project.id;
 
             return (
-              <motion.div
+              <TiltCard
                 key={project.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
+                whileHover={{ y: -6 }}
                 className="group bg-white dark:bg-gray-900 rounded-xl shadow-md hover:shadow-xl transition-all overflow-hidden border border-gray-100 dark:border-gray-700/50"
               >
                 {/* Project header with gradient */}
@@ -145,7 +146,7 @@ const Projects = () => {
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </TiltCard>
             );
           })}
         </div>

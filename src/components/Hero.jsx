@@ -1,9 +1,21 @@
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, Phone, MapPin, Download, ChevronDown } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 
+// Lazy-loaded so three.js ships as its own chunk and never blocks first paint.
+const Hero3D = lazy(() => import('./Hero3D'));
+
 const Hero = () => {
   const { personal } = portfolioData;
+
+  // Only mount the WebGL scene when motion is welcome — respects
+  // prefers-reduced-motion and skips the heavy bundle for those users.
+  const [show3D, setShow3D] = useState(false);
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setShow3D(!reduced);
+  }, []);
 
   const socialLinks = [
     { icon: Github, href: personal.links.github, label: 'GitHub' },
@@ -26,7 +38,16 @@ const Hero = () => {
       {/* Grid pattern overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
 
-      <div className="relative container-custom section-padding">
+      {/* Interactive 3D neural core — pointer-reactive, behind all content */}
+      {show3D && (
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-70 dark:opacity-90">
+          <Suspense fallback={null}>
+            <Hero3D />
+          </Suspense>
+        </div>
+      )}
+
+      <div className="relative z-10 container-custom section-padding">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
           {/* Left Side - Photo */}
