@@ -15,30 +15,42 @@ function App() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
       <Header theme={theme} toggleTheme={toggleTheme} />
-      <Hero />
-      <About />
-      <Experience />
-      <CodingDashboard />
-      <Projects />
-      <Skills />
-      <Education />
-      <Achievements />
-      <Contact />
+      <main>
+        <Hero />
+        <About />
+        <Experience />
+        <CodingDashboard />
+        <Projects />
+        <Skills />
+        <Education />
+        <Achievements />
+        <Contact />
+      </main>
       <ScrollToTopButton />
 
-      <footer className="relative bg-gray-950 text-white py-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900 to-gray-950" />
-        <div className="relative container-custom section-padding text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-primary-500" />
-            <span className="text-sm font-semibold gradient-text">Aman Kumar</span>
-            <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-purple-500" />
+      <footer className="relative bg-zinc-950 text-white py-10 overflow-hidden border-t border-zinc-900">
+        {/* Ambient top fade */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+
+        <div className="relative container-custom section-padding">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                <span className="text-white font-black text-xs">A</span>
+              </div>
+              <span className="font-semibold text-zinc-300 tracking-tight">Aman Kumar</span>
+            </div>
+
+            <p className="mono-label text-zinc-600 text-center">
+              Built with React, Vite &amp; Tailwind · Deployed on Vercel
+            </p>
+
+            <p className="mono-label text-zinc-700">
+              © {new Date().getFullYear()}
+            </p>
           </div>
-          <p className="text-gray-500 text-xs">
-            Built with React, Vite & Tailwind CSS
-          </p>
         </div>
       </footer>
     </div>

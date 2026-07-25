@@ -1,39 +1,32 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Github, Linkedin, Mail, Phone, MapPin, Download, ChevronDown } from 'lucide-react';
+import { Github, Linkedin, Mail, Download, ChevronDown } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 
-// Lazy-loaded so three.js ships as its own chunk and never blocks first paint.
 const Hero3D = lazy(() => import('./Hero3D'));
 
 const Hero = () => {
   const { personal } = portfolioData;
 
-  // Only mount the WebGL scene when motion is welcome — respects
-  // prefers-reduced-motion and skips the heavy bundle for those users.
   const [show3D, setShow3D] = useState(false);
-  // Pointer-driven 3D parallax for the hero content (photo + text panel).
-  // Disabled on touch and reduced-motion so it never feels broken.
   const [tiltEnabled, setTiltEnabled] = useState(false);
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const coarse  = window.matchMedia('(pointer: coarse)').matches;
     setShow3D(!reduced);
     setTiltEnabled(!reduced && !coarse);
   }, []);
 
-  // Raw pointer offset (-0.5..0.5), smoothed through springs.
   const mvX = useMotionValue(0);
   const mvY = useMotionValue(0);
-  const springCfg = { stiffness: 120, damping: 18, mass: 0.4 };
+  const springCfg = { stiffness: 100, damping: 20, mass: 0.5 };
   const sx = useSpring(mvX, springCfg);
   const sy = useSpring(mvY, springCfg);
 
-  // Photo tilts boldly; the text panel drifts on the same perspective gently.
-  const photoRotateY = useTransform(sx, [-0.5, 0.5], [-16, 16]);
-  const photoRotateX = useTransform(sy, [-0.5, 0.5], [16, -16]);
-  const contentRotateY = useTransform(sx, [-0.5, 0.5], [6, -6]);
-  const contentRotateX = useTransform(sy, [-0.5, 0.5], [-4, 4]);
+  const photoRotateY = useTransform(sx, [-0.5, 0.5], [-14, 14]);
+  const photoRotateX = useTransform(sy, [-0.5, 0.5], [14, -14]);
+  const contentRotateY = useTransform(sx, [-0.5, 0.5], [5, -5]);
+  const contentRotateX = useTransform(sy, [-0.5, 0.5], [-3, 3]);
 
   const handlePointer = (e) => {
     if (!tiltEnabled) return;
@@ -41,178 +34,189 @@ const Hero = () => {
     mvX.set((e.clientX - r.left) / r.width - 0.5);
     mvY.set((e.clientY - r.top) / r.height - 0.5);
   };
-  const resetPointer = () => {
-    mvX.set(0);
-    mvY.set(0);
-  };
+  const resetPointer = () => { mvX.set(0); mvY.set(0); };
 
   const socialLinks = [
-    { icon: Github, href: personal.links.github, label: 'GitHub' },
-    { icon: Linkedin, href: personal.links.linkedin, label: 'LinkedIn' },
-    { icon: Mail, href: `mailto:${personal.email}`, label: 'Email' },
+    { icon: Github,   href: personal.links.github,             label: 'GitHub'   },
+    { icon: Linkedin, href: personal.links.linkedin,           label: 'LinkedIn' },
+    { icon: Mail,     href: `mailto:${personal.email}`,         label: 'Email'    },
+  ];
+
+  const stats = [
+    { value: '8.16', label: 'CGPA' },
+    { value: '1000+', label: 'Problems' },
+    { value: '1540', label: 'LC Rating' },
   ];
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Animated background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950" />
+    <section id="home" className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-16">
 
-      {/* Floating orbs */}
+      {/* Background — dark slate with warm tint, not pure black */}
+      <div className="absolute inset-0 bg-gradient-to-br from-zinc-50 via-slate-50 to-indigo-50/30 dark:from-zinc-950 dark:via-zinc-900 dark:to-indigo-950/20" />
+
+      {/* Ambient orbs — desaturated, intentional placement */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-primary-500/10 dark:bg-primary-500/5 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 dark:bg-purple-500/5 rounded-full blur-3xl animate-float-delayed" />
-        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-indigo-500/8 dark:bg-indigo-500/5 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-violet-500/8 dark:bg-violet-500/4 rounded-full blur-3xl animate-float-delayed" />
+        <div className="absolute top-2/3 left-1/3 w-56 h-56 bg-emerald-500/6 dark:bg-emerald-500/3 rounded-full blur-3xl animate-float-slow" />
       </div>
 
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.025)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:56px_56px]" />
 
-      {/* Interactive 3D neural core — pointer-reactive, behind all content */}
+      {/* 3D neural core */}
       {show3D && (
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-70 dark:opacity-90">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-60 dark:opacity-80">
           <Suspense fallback={null}>
             <Hero3D />
           </Suspense>
         </div>
       )}
 
-      <div className="relative z-10 container-custom section-padding">
+      <div className="relative z-10 container-custom section-padding w-full">
         <div
-          className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+          className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center py-12"
           style={{ perspective: 1200 }}
           onMouseMove={handlePointer}
           onMouseLeave={resetPointer}
         >
 
-          {/* Left Side - Photo */}
+          {/* Left — Photo */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             style={{ rotateX: photoRotateX, rotateY: photoRotateY, transformStyle: 'preserve-3d' }}
             className="flex justify-center lg:justify-end order-1 lg:order-1"
           >
             <div className="relative group" style={{ transformStyle: 'preserve-3d' }}>
-              {/* Outer glow ring */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-primary-500 via-purple-500 to-emerald-500 rounded-full opacity-20 group-hover:opacity-40 blur-2xl transition-opacity duration-700" />
+              {/* Outer glow */}
+              <div className="absolute -inset-5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-400 rounded-full opacity-15 group-hover:opacity-30 blur-2xl transition-opacity duration-700" />
 
-              {/* Spinning border gradient */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 via-purple-500 to-emerald-500 rounded-full animate-spin-slow opacity-60" />
+              {/* Spinning gradient ring */}
+              <div className="absolute -inset-[3px] bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-400 rounded-full animate-spin-slow opacity-70" />
 
-              {/* Main photo container */}
+              {/* White gap ring */}
+              <div className="absolute -inset-[1px] bg-white dark:bg-zinc-950 rounded-full" />
+
+              {/* Photo */}
               <motion.div
-                whileHover={{ scale: 1.03 }}
-                transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                className="relative w-64 h-64 md:w-80 md:h-80 lg:w-[22rem] lg:h-[22rem]"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: 'spring', stiffness: 250, damping: 18 }}
+                className="relative w-60 h-60 md:w-72 md:h-72 lg:w-[21rem] lg:h-[21rem]"
               >
                 <img
                   src="/profile-pic.jpg"
-                  alt="Aman Kumar"
-                  className="w-full h-full object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-2xl relative z-10"
+                  alt="Aman Kumar — AI/ML Engineer"
+                  className="w-full h-full object-cover rounded-full relative z-10"
                 />
               </motion.div>
 
-              {/* Floating badges — pushed forward on the Z axis so they
-                  visibly hover above the photo as the card tilts */}
+              {/* Floating badge — SDE */}
               <motion.div
-                animate={{ y: [-5, 5, -5] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                style={{ z: 70 }}
-                className="absolute -top-2 -right-2 z-20 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-100 dark:border-gray-700"
+                animate={{ y: [-4, 4, -4] }}
+                transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ z: 60 }}
+                className="absolute -top-1 -right-3 z-20 px-3 py-1.5 bg-white dark:bg-zinc-900 rounded-full shadow-indigo-sm border border-zinc-100 dark:border-zinc-800"
               >
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">SDE Intern</span>
+                <span className="mono-label text-emerald-600 dark:text-emerald-400">SDE Intern</span>
               </motion.div>
 
+              {/* Floating badge — AI/ML */}
               <motion.div
-                animate={{ y: [5, -5, 5] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                style={{ z: 55 }}
-                className="absolute -bottom-2 -left-2 z-20 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-100 dark:border-gray-700"
+                animate={{ y: [4, -4, 4] }}
+                transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ z: 50 }}
+                className="absolute -bottom-1 -left-3 z-20 px-3 py-1.5 bg-white dark:bg-zinc-900 rounded-full shadow-indigo-sm border border-zinc-100 dark:border-zinc-800"
               >
-                <span className="text-xs font-bold text-primary-600 dark:text-primary-400">AI/ML</span>
+                <span className="mono-label text-indigo-600 dark:text-indigo-400">AI · ML</span>
               </motion.div>
             </div>
           </motion.div>
 
-          {/* Right Side - Content */}
+          {/* Right — Content */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             style={{ rotateX: contentRotateX, rotateY: contentRotateY, transformStyle: 'preserve-3d' }}
-            className="text-center lg:text-left space-y-5 order-2 lg:order-2"
+            className="text-center lg:text-left space-y-6 order-2 lg:order-2"
           >
-            {/* Status badge */}
+            {/* Available badge */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 rounded-full text-sm font-medium"
+              transition={{ delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full
+                         bg-emerald-50 dark:bg-emerald-950/40
+                         border border-emerald-200 dark:border-emerald-800/60
+                         text-emerald-700 dark:text-emerald-400"
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              <span className="relative flex h-2 w-2 flex-shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              Open to Opportunities
+              <span className="mono-label text-emerald-700 dark:text-emerald-400">Open to opportunities</span>
             </motion.div>
 
-            {/* Name */}
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
+            {/* Name — display heading */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+              transition={{ delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
             >
-              <span className="text-gray-900 dark:text-white">Hi, I'm </span>
-              <span className="gradient-text">{personal.name}</span>
-            </motion.h1>
+              <div className="mono-label text-zinc-400 dark:text-zinc-500 mb-2">Hello, I'm</div>
+              <h1 className="display-heading text-5xl md:text-6xl lg:text-7xl text-zinc-900 dark:text-zinc-50">
+                <span className="gradient-text">Aman Kumar</span>
+              </h1>
+            </motion.div>
 
             {/* Title */}
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-medium"
+              transition={{ delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="text-xl md:text-2xl text-zinc-600 dark:text-zinc-300 font-medium tracking-snug"
             >
               {personal.title}
-            </motion.h2>
-
-            {/* Summary */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="text-base text-gray-600 dark:text-gray-400 leading-relaxed max-w-xl lg:max-w-none"
-            >
-              {personal.summary}
             </motion.p>
 
-            {/* Quick stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+            {/* One-liner summary — shorter, punchier */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.0 }}
-              className="flex flex-wrap justify-center lg:justify-start gap-3"
+              transition={{ delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="text-base text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-[55ch] lg:max-w-none"
             >
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">CGPA 8.16</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="w-2 h-2 rounded-full bg-primary-500" />
-                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">1000+ Problems</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="w-2 h-2 rounded-full bg-purple-500" />
-                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">LeetCode 1540</span>
-              </div>
+              Building production AI systems at QuickIntell — RPA bots, NLP pipelines, and full-stack platforms.
+              IIIT Raichur · 1000+ DSA problems · Global rank &lt;3000.
+            </motion.p>
+
+            {/* Stats pills */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-wrap justify-center lg:justify-start gap-2"
+            >
+              {stats.map(({ value, label }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-zinc-900
+                             rounded-lg border border-zinc-200 dark:border-zinc-800
+                             shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
+                >
+                  <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100 tabular-nums">{value}</span>
+                  <span className="mono-label text-zinc-400 dark:text-zinc-500">{label}</span>
+                </div>
+              ))}
             </motion.div>
 
-            {/* Social Links + Buttons */}
+            {/* CTAs + Social */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1 }}
+              transition={{ delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col sm:flex-row items-center lg:items-start gap-4"
             >
               <div className="flex gap-3">
@@ -222,11 +226,18 @@ const Hero = () => {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.15, y: -2 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border border-gray-200 dark:border-gray-700"
+                    aria-label={label}
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.92 }}
+                    className="p-2.5 rounded-xl bg-white dark:bg-zinc-900
+                               border border-zinc-200 dark:border-zinc-800
+                               text-zinc-600 dark:text-zinc-400
+                               hover:text-indigo-600 dark:hover:text-indigo-400
+                               hover:border-indigo-300 dark:hover:border-indigo-700
+                               shadow-[0_1px_4px_rgba(0,0,0,0.06)]
+                               transition-all duration-200"
                   >
-                    <Icon size={20} />
+                    <Icon size={19} strokeWidth={1.75} />
                   </motion.a>
                 ))}
               </div>
@@ -234,11 +245,14 @@ const Hero = () => {
               <div className="flex gap-3">
                 <motion.a
                   href="#experience"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-6 py-2.5 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 text-white rounded-xl font-medium transition-all shadow-lg hover:shadow-xl text-sm"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white
+                             bg-indigo-600 hover:bg-indigo-500
+                             shadow-indigo-sm hover:shadow-indigo-md
+                             transition-all duration-200"
                 >
-                  View My Work
+                  View my work
                 </motion.a>
 
                 <motion.a
@@ -246,11 +260,17 @@ const Hero = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   download
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-xl font-medium transition-all shadow-md hover:shadow-lg text-sm"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
+                             bg-white dark:bg-zinc-900
+                             text-zinc-700 dark:text-zinc-300
+                             border border-zinc-200 dark:border-zinc-800
+                             hover:border-indigo-300 dark:hover:border-indigo-700
+                             shadow-[0_1px_4px_rgba(0,0,0,0.06)]
+                             transition-all duration-200"
                 >
-                  <Download size={16} />
+                  <Download size={15} strokeWidth={2} />
                   Resume
                 </motion.a>
               </div>
@@ -267,11 +287,11 @@ const Hero = () => {
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="text-gray-400 dark:text-gray-600"
+          animate={{ y: [0, 7, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          className="text-zinc-300 dark:text-zinc-600"
         >
-          <ChevronDown size={24} />
+          <ChevronDown size={22} strokeWidth={1.5} />
         </motion.div>
       </motion.div>
     </section>
