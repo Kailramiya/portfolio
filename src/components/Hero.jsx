@@ -1,86 +1,144 @@
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Github, Linkedin, Mail, Download, ChevronDown } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 
-const Hero3D = lazy(() => import('./Hero3D'));
+// Particle dot — floats upward from bottom, fades out
+const Particle = ({ style }) => (
+  <motion.div
+    className="absolute rounded-full bg-indigo-500 dark:bg-indigo-400 pointer-events-none"
+    style={style}
+    animate={{
+      y: [0, -120, -200],
+      opacity: [0, 0.6, 0],
+      scale: [0.5, 1, 0.3],
+    }}
+    transition={{
+      duration: style.duration,
+      repeat: Infinity,
+      delay: style.delay,
+      ease: 'easeOut',
+    }}
+  />
+);
+
+// Pre-generate stable particle configs (avoid regen on each render)
+const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
+  width:    4 + (i % 5) * 2,
+  height:   4 + (i % 5) * 2,
+  left:     `${4 + (i * 17 + i * 4) % 92}%`,
+  bottom:   `${(i * 7) % 30}%`,
+  duration: 4 + (i % 6) * 1.2,
+  delay:    (i * 0.55) % 6,
+}));
 
 const Hero = () => {
   const { personal } = portfolioData;
+  const sectionRef = useRef(null);
 
-  const [show3D, setShow3D] = useState(false);
   const [tiltEnabled, setTiltEnabled] = useState(false);
+  const [reduced, setReduced] = useState(false);
+
   useEffect(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const coarse  = window.matchMedia('(pointer: coarse)').matches;
-    setShow3D(!reduced);
-    setTiltEnabled(!reduced && !coarse);
+    const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    setReduced(rm);
+    setTiltEnabled(!rm && !coarse);
   }, []);
 
+  // ── Cursor spotlight (useMotionValue — zero rerenders) ──
+  const cursorX = useMotionValue(-600);
+  const cursorY = useMotionValue(-600);
+  const spotlightBg = useTransform(
+    [cursorX, cursorY],
+    ([x, y]) =>
+      `radial-gradient(500px circle at ${x}px ${y}px, rgba(99,102,241,0.10) 0%, rgba(139,92,246,0.04) 40%, transparent 70%)`
+  );
+
+  const handleSectionMouseMove = (e) => {
+    const rect = sectionRef.current?.getBoundingClientRect();
+    if (rect) {
+      cursorX.set(e.clientX - rect.left);
+      cursorY.set(e.clientY - rect.top);
+    }
+    // Tilt
+    if (tiltEnabled) {
+      mvX.set((e.clientX - rect.left) / rect.width - 0.5);
+      mvY.set((e.clientY - rect.top) / rect.height - 0.5);
+    }
+  };
+  const handleSectionMouseLeave = () => {
+    cursorX.set(-600);
+    cursorY.set(-600);
+    mvX.set(0);
+    mvY.set(0);
+  };
+
+  // ── 3D tilt ──
   const mvX = useMotionValue(0);
   const mvY = useMotionValue(0);
   const springCfg = { stiffness: 100, damping: 20, mass: 0.5 };
   const sx = useSpring(mvX, springCfg);
   const sy = useSpring(mvY, springCfg);
-
-  const photoRotateY = useTransform(sx, [-0.5, 0.5], [-14, 14]);
-  const photoRotateX = useTransform(sy, [-0.5, 0.5], [14, -14]);
+  const photoRotateY  = useTransform(sx, [-0.5, 0.5], [-14, 14]);
+  const photoRotateX  = useTransform(sy, [-0.5, 0.5], [14, -14]);
   const contentRotateY = useTransform(sx, [-0.5, 0.5], [5, -5]);
   const contentRotateX = useTransform(sy, [-0.5, 0.5], [-3, 3]);
 
-  const handlePointer = (e) => {
-    if (!tiltEnabled) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    mvX.set((e.clientX - r.left) / r.width - 0.5);
-    mvY.set((e.clientY - r.top) / r.height - 0.5);
-  };
-  const resetPointer = () => { mvX.set(0); mvY.set(0); };
-
   const socialLinks = [
-    { icon: Github,   href: personal.links.github,             label: 'GitHub'   },
-    { icon: Linkedin, href: personal.links.linkedin,           label: 'LinkedIn' },
-    { icon: Mail,     href: `mailto:${personal.email}`,         label: 'Email'    },
+    { icon: Github,   href: personal.links.github,         label: 'GitHub'   },
+    { icon: Linkedin, href: personal.links.linkedin,        label: 'LinkedIn' },
+    { icon: Mail,     href: `mailto:${personal.email}`,     label: 'Email'    },
   ];
 
   const stats = [
-    { value: '8.16', label: 'CGPA' },
+    { value: '8.16',  label: 'CGPA' },
     { value: '1000+', label: 'Problems' },
-    { value: '1540', label: 'LC Rating' },
+    { value: '1540',  label: 'LC Rating' },
   ];
 
   return (
-    <section id="home" className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-16">
-
-      {/* Background — dark slate with warm tint, not pure black */}
+    <section
+      id="home"
+      ref={sectionRef}
+      className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-16"
+      onMouseMove={handleSectionMouseMove}
+      onMouseLeave={handleSectionMouseLeave}
+    >
+      {/* Base background */}
       <div className="absolute inset-0 bg-gradient-to-br from-zinc-50 via-slate-50 to-indigo-50/30 dark:from-zinc-950 dark:via-zinc-900 dark:to-indigo-950/20" />
 
-      {/* Ambient orbs — desaturated, intentional placement */}
+      {/* ── CURSOR SPOTLIGHT ── follows mouse, no re-renders */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-10"
+        style={{ background: spotlightBg }}
+      />
+
+      {/* ── AMBIENT ORBS ── positioned edges, not center */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-indigo-500/8 dark:bg-indigo-500/5 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-violet-500/8 dark:bg-violet-500/4 rounded-full blur-3xl animate-float-delayed" />
-        <div className="absolute top-2/3 left-1/3 w-56 h-56 bg-emerald-500/6 dark:bg-emerald-500/3 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute -top-16 -left-16 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-500/6 rounded-full blur-3xl animate-float" />
+        <div className="absolute -bottom-20 -right-20 w-[28rem] h-[28rem] bg-violet-500/10 dark:bg-violet-500/5 rounded-full blur-3xl animate-float-delayed" />
+        <div className="absolute top-1/2 -left-32 w-64 h-64 bg-emerald-400/6 dark:bg-emerald-400/3 rounded-full blur-3xl animate-float-slow" />
       </div>
 
-      {/* Subtle grid pattern */}
+      {/* ── GRID PATTERN ── */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.025)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:56px_56px]" />
 
-      {/* 3D neural core */}
-      {show3D && (
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-60 dark:opacity-80">
-          <Suspense fallback={null}>
-            <Hero3D />
-          </Suspense>
+      {/* ── FLOATING PARTICLES ── scattered around bottom edge, not center */}
+      {!reduced && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          {PARTICLES.map((p, i) => (
+            <Particle key={i} style={p} />
+          ))}
         </div>
       )}
 
-      <div className="relative z-10 container-custom section-padding w-full">
+      {/* Content */}
+      <div className="relative z-20 container-custom section-padding w-full">
         <div
           className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center py-12"
           style={{ perspective: 1200 }}
-          onMouseMove={handlePointer}
-          onMouseLeave={resetPointer}
         >
-
           {/* Left — Photo */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -92,13 +150,10 @@ const Hero = () => {
             <div className="relative group" style={{ transformStyle: 'preserve-3d' }}>
               {/* Outer glow */}
               <div className="absolute -inset-5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-400 rounded-full opacity-15 group-hover:opacity-30 blur-2xl transition-opacity duration-700" />
-
               {/* Spinning gradient ring */}
               <div className="absolute -inset-[3px] bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-400 rounded-full animate-spin-slow opacity-70" />
-
-              {/* White gap ring */}
+              {/* White gap */}
               <div className="absolute -inset-[1px] bg-white dark:bg-zinc-950 rounded-full" />
-
               {/* Photo */}
               <motion.div
                 whileHover={{ scale: 1.02 }}
@@ -116,7 +171,6 @@ const Hero = () => {
               <motion.div
                 animate={{ y: [-4, 4, -4] }}
                 transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-                style={{ z: 60 }}
                 className="absolute -top-1 -right-3 z-20 px-3 py-1.5 bg-white dark:bg-zinc-900 rounded-full shadow-indigo-sm border border-zinc-100 dark:border-zinc-800"
               >
                 <span className="mono-label text-emerald-600 dark:text-emerald-400">SDE Intern</span>
@@ -126,7 +180,6 @@ const Hero = () => {
               <motion.div
                 animate={{ y: [4, -4, 4] }}
                 transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
-                style={{ z: 50 }}
                 className="absolute -bottom-1 -left-3 z-20 px-3 py-1.5 bg-white dark:bg-zinc-900 rounded-full shadow-indigo-sm border border-zinc-100 dark:border-zinc-800"
               >
                 <span className="mono-label text-indigo-600 dark:text-indigo-400">AI · ML</span>
@@ -149,8 +202,7 @@ const Hero = () => {
               transition={{ delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full
                          bg-emerald-50 dark:bg-emerald-950/40
-                         border border-emerald-200 dark:border-emerald-800/60
-                         text-emerald-700 dark:text-emerald-400"
+                         border border-emerald-200 dark:border-emerald-800/60"
             >
               <span className="relative flex h-2 w-2 flex-shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -159,7 +211,7 @@ const Hero = () => {
               <span className="mono-label text-emerald-700 dark:text-emerald-400">Open to opportunities</span>
             </motion.div>
 
-            {/* Name — display heading */}
+            {/* Name */}
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -181,7 +233,7 @@ const Hero = () => {
               {personal.title}
             </motion.p>
 
-            {/* One-liner summary — shorter, punchier */}
+            {/* Summary */}
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -192,7 +244,7 @@ const Hero = () => {
               IIIT Raichur · 1000+ DSA problems · Global rank &lt;3000.
             </motion.p>
 
-            {/* Stats pills */}
+            {/* Stats */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -212,7 +264,7 @@ const Hero = () => {
               ))}
             </motion.div>
 
-            {/* CTAs + Social */}
+            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -254,7 +306,6 @@ const Hero = () => {
                 >
                   View my work
                 </motion.a>
-
                 <motion.a
                   href="/Aman_Kumar_Resume.pdf"
                   target="_blank"
@@ -284,7 +335,7 @@ const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
       >
         <motion.div
           animate={{ y: [0, 7, 0] }}

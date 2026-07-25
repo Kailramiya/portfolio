@@ -10,12 +10,14 @@ import Education from './components/Education';
 import Achievements from './components/Achievements';
 import Contact from './components/Contact';
 import ScrollToTopButton from './components/ScrollToTopButton';
+import CursorTrail from './components/CursorTrail';
 
 function App() {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
+      <CursorTrail />
       <Header theme={theme} toggleTheme={toggleTheme} />
       <main>
         <Hero />
