@@ -11,7 +11,7 @@ import {
 import { useCodingStats } from '../hooks/useCodingStats'
 import { useTheme } from '../hooks/useTheme'
 import TiltCard from './TiltCard'
-import GitHubCalendar from 'react-github-calendar'
+import { GitHubCalendar } from 'react-github-calendar'
 
 function SkeletonCard() {
 	return (
