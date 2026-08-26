@@ -9,7 +9,9 @@ import {
 	RefreshCw,
 } from 'lucide-react'
 import { useCodingStats } from '../hooks/useCodingStats'
+import { useTheme } from '../hooks/useTheme'
 import TiltCard from './TiltCard'
+import GitHubCalendar from 'react-github-calendar'
 
 function SkeletonCard() {
 	return (
@@ -130,6 +132,7 @@ export default function CodingDashboard({
 	handles,
 }) {
 	const { data, loading, error, reload, handles: linkHandles } = useCodingStats(handles)
+	const { theme } = useTheme()
 
 	const normalized = data?.normalized || {}
 	const handlesOut = data?.handles || {}
@@ -275,7 +278,29 @@ export default function CodingDashboard({
 						))}
 				</div>
 
-				<p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+				<div className="mt-14 max-w-5xl mx-auto">
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5, delay: 0.2 }}
+						className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 p-6 md:p-8 overflow-hidden"
+					>
+						<h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">GitHub Contributions</h3>
+						<div className="overflow-x-auto pb-4">
+							<div className="min-w-[800px] flex justify-center">
+								<GitHubCalendar 
+									username={linkHandles?.github || 'Kailramiya'} 
+									colorScheme={theme === 'dark' ? 'dark' : 'light'}
+									blockSize={15}
+									blockMargin={5}
+									fontSize={14}
+								/>
+							</div>
+						</div>
+					</motion.div>
+				</div>
+
+				<p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
 					Stats are auto-synced every 6 hours via backend services deployed on Vercel.
 				</p>
 			</div>
