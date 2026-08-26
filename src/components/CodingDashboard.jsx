@@ -289,36 +289,30 @@ export default function CodingDashboard({
 						transition={{ duration: 0.5, delay: 0.2 }}
 						className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 p-6 md:p-8 overflow-hidden"
 					>
-						<h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">GitHub Contributions</h3>
-						<div className="flex flex-col xl:flex-row gap-8">
-							<div className="flex-1 overflow-x-auto pb-4">
-								<div className="min-w-[800px] flex justify-center">
-									<GitHubCalendar 
-										username={linkHandles?.github || 'Kailramiya'} 
-										colorScheme={theme === 'dark' ? 'dark' : 'light'}
-										blockSize={15}
-										blockMargin={5}
-										fontSize={14}
-										year={selectedYear}
-									/>
-								</div>
-							</div>
-							
-							{/* Year Selector Sidebar */}
-							<div className="flex xl:flex-col gap-2 overflow-x-auto xl:overflow-visible shrink-0 pb-2 xl:pb-0">
+						<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+							<h3 className="text-xl font-bold text-gray-900 dark:text-white">GitHub Contributions</h3>
+							<select
+								value={selectedYear}
+								onChange={(e) => setSelectedYear(e.target.value === 'last' ? 'last' : Number(e.target.value))}
+								className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer shadow-sm transition-colors"
+							>
 								{githubYears.map(year => (
-									<button 
-										key={year} 
-										onClick={() => setSelectedYear(year)}
-										className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-											selectedYear === year 
-												? 'bg-primary-600 text-white shadow-md' 
-												: 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-										}`}
-									>
+									<option key={year} value={year}>
 										{year === 'last' ? 'Last Year' : year}
-									</button>
+									</option>
 								))}
+							</select>
+						</div>
+						<div className="overflow-x-auto pb-4">
+							<div className="min-w-[800px] flex justify-center">
+								<GitHubCalendar 
+									username={linkHandles?.github || 'Kailramiya'} 
+									colorScheme={theme === 'dark' ? 'dark' : 'light'}
+									blockSize={15}
+									blockMargin={5}
+									fontSize={14}
+									year={selectedYear}
+								/>
 							</div>
 						</div>
 					</motion.div>
