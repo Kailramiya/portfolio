@@ -11,6 +11,7 @@ import Achievements from './components/Achievements';
 import Contact from './components/Contact';
 import ScrollToTopButton from './components/ScrollToTopButton';
 import CursorTrail from './components/CursorTrail';
+import FloatingContact from './components/FloatingContact';
 
 function App() {
   const { theme, toggleTheme } = useTheme();
@@ -31,6 +32,7 @@ function App() {
         <Contact />
       </main>
       <ScrollToTopButton />
+      <FloatingContact />
 
       <footer className="relative bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white py-10 overflow-hidden border-t border-zinc-200 dark:border-zinc-900 transition-colors duration-300">
         {/* Ambient top fade */}
