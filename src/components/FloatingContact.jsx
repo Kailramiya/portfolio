@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { Github, Linkedin, Mail, Phone } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 
 const FloatingContact = () => {
@@ -39,6 +39,7 @@ const FloatingContact = () => {
     { icon: Github,   href: personal.links.github,   label: 'GitHub'   },
     { icon: Linkedin, href: personal.links.linkedin, label: 'LinkedIn' },
     { icon: Mail,     href: `mailto:${personal.email}`, label: 'Email' },
+    { icon: Phone,    href: `tel:${personal.phone}`, label: 'Phone' },
   ];
 
   return (
@@ -52,13 +53,14 @@ const FloatingContact = () => {
           className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] pointer-events-auto"
         >
           <div className="flex items-center gap-5 px-6 py-3.5 rounded-full 
-                          bg-white/40 dark:bg-zinc-950/40 backdrop-blur-xl saturate-150
-                          border border-zinc-200/50 dark:border-zinc-800/50 
-                          shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25)]">
+                          bg-white/20 dark:bg-zinc-900/30 backdrop-blur-2xl saturate-[2]
+                          border border-white/40 dark:border-zinc-700/30 
+                          shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.5)] 
+                          dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.05)]">
             
-            <div className="hidden sm:block mr-2 border-r border-zinc-300/50 dark:border-zinc-700/50 pr-5">
-              <span className="mono-label text-zinc-600 dark:text-zinc-400 whitespace-nowrap">Let's Connect</span>
-            </div>
+            <a href="#contact" className="hidden sm:block mr-2 border-r border-zinc-400/30 dark:border-zinc-700/50 pr-5 group cursor-pointer transition-all">
+              <span className="mono-label text-zinc-700 dark:text-zinc-300 whitespace-nowrap group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Let's Connect</span>
+            </a>
 
             {socialLinks.map(({ icon: Icon, href, label }) => (
               <motion.a
