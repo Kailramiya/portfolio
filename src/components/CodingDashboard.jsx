@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
 	ExternalLink,
@@ -133,6 +133,10 @@ export default function CodingDashboard({
 }) {
 	const { data, loading, error, reload, handles: linkHandles } = useCodingStats(handles)
 	const { theme } = useTheme()
+	const [selectedYear, setSelectedYear] = useState('last')
+
+	const currentYear = new Date().getFullYear()
+	const githubYears = ['last', ...Array.from({ length: currentYear - 2020 + 1 }, (_, i) => currentYear - i)]
 
 	const normalized = data?.normalized || {}
 	const handlesOut = data?.handles || {}
@@ -286,15 +290,35 @@ export default function CodingDashboard({
 						className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 p-6 md:p-8 overflow-hidden"
 					>
 						<h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">GitHub Contributions</h3>
-						<div className="overflow-x-auto pb-4">
-							<div className="min-w-[800px] flex justify-center">
-								<GitHubCalendar 
-									username={linkHandles?.github || 'Kailramiya'} 
-									colorScheme={theme === 'dark' ? 'dark' : 'light'}
-									blockSize={15}
-									blockMargin={5}
-									fontSize={14}
-								/>
+						<div className="flex flex-col xl:flex-row gap-8">
+							<div className="flex-1 overflow-x-auto pb-4">
+								<div className="min-w-[800px] flex justify-center">
+									<GitHubCalendar 
+										username={linkHandles?.github || 'Kailramiya'} 
+										colorScheme={theme === 'dark' ? 'dark' : 'light'}
+										blockSize={15}
+										blockMargin={5}
+										fontSize={14}
+										year={selectedYear}
+									/>
+								</div>
+							</div>
+							
+							{/* Year Selector Sidebar */}
+							<div className="flex xl:flex-col gap-2 overflow-x-auto xl:overflow-visible shrink-0 pb-2 xl:pb-0">
+								{githubYears.map(year => (
+									<button 
+										key={year} 
+										onClick={() => setSelectedYear(year)}
+										className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+											selectedYear === year 
+												? 'bg-primary-600 text-white shadow-md' 
+												: 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+										}`}
+									>
+										{year === 'last' ? 'Last Year' : year}
+									</button>
+								))}
 							</div>
 						</div>
 					</motion.div>
