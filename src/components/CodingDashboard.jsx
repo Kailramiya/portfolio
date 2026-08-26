@@ -137,9 +137,8 @@ export default function CodingDashboard({
 	const totalSolved = useMemo(() => {
 		const leet = Number(normalized?.leetcode?.solved?.total)
 		const cf = Number(normalized?.codeforces?.solved?.total)
-		const cc = Number(normalized?.codechef?.solved?.total)
 		const gfg = Number(normalized?.geeksforgeeks?.totalSolved)
-		const values = [leet, cf, cc, gfg].filter(v => Number.isFinite(v))
+		const values = [leet, cf, gfg].filter(v => Number.isFinite(v))
 		if (!values.length) return null
 		return values.reduce((a, b) => a + b, 0)
 	}, [normalized])
@@ -187,22 +186,6 @@ export default function CodingDashboard({
 				status: codeforces ? 'ok' : null,
 			},
 			{
-				key: 'codechef',
-				title: 'CodeChef',
-				icon: Trophy,
-				accent: 'from-primary-600 to-purple-600',
-				profileUrl: linkHandles.codechef ? `https://www.codechef.com/users/${linkHandles.codechef}` : null,
-				primaryValue: codechef?.rating ?? null,
-				primaryLabel: 'Current rating',
-				stats: [
-					{ label: 'Solved', value: codechef?.solved?.total ?? '—' },
-					{ label: 'Stars', value: codechef?.stars ?? '—' },
-					{ label: 'Global rank', value: codechef?.globalRank ?? '—' },
-					{ label: 'Country rank', value: codechef?.countryRank ?? '—' },
-				],
-				status: codechef ? 'ok' : null,
-			},
-			{
 				key: 'gfg',
 				title: 'GeeksforGeeks',
 				icon: Code,
@@ -216,22 +199,6 @@ export default function CodingDashboard({
 					{ label: 'Institute rank', value: gfg?.instituteRank ?? '—' },
 				],
 				status: gfg ? 'ok' : null,
-			},
-			{
-				key: 'github',
-				title: 'GitHub',
-				icon: Github,
-				accent: 'from-gray-700 to-gray-900',
-				profileUrl: github?.htmlUrl || (linkHandles.github ? `https://github.com/${linkHandles.github}` : null),
-				primaryValue: github?.followers ?? null,
-				primaryLabel: 'Followers',
-				stats: [
-					{ label: 'Commits', value: github?.commitsRecent ?? '—' },
-					{ label: 'Public repos', value: github?.publicRepos ?? '—' },
-					{ label: 'Following', value: github?.following ?? '—' },
-					{ label: 'Profile', value: github?.login ?? handlesOut.github ?? '—' },
-				],
-				status: github ? 'ok' : null,
 			},
 		]
 	}, [linkHandles, normalized])
