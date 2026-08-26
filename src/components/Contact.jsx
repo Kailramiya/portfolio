@@ -51,9 +51,9 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="section-compact bg-zinc-950 relative overflow-hidden noise-overlay">
+    <section id="contact" className="section-compact bg-white dark:bg-zinc-950 relative overflow-hidden noise-overlay transition-colors duration-300">
       {/* Ambient gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/30 via-zinc-950 to-violet-950/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-violet-50/30 dark:from-indigo-950/30 dark:via-zinc-950 dark:to-violet-950/20 pointer-events-none transition-colors duration-300" />
       {/* Top accent line */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent" />
 
@@ -65,10 +65,10 @@ const Contact = () => {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="section-margin"
         >
-          <h2 className="display-heading text-4xl md:text-5xl text-zinc-50 mb-3">
+          <h2 className="display-heading text-4xl md:text-5xl text-zinc-900 dark:text-zinc-50 mb-3">
             Let's connect
           </h2>
-          <p className="text-base text-zinc-400 max-w-[50ch]">
+          <p className="text-base text-zinc-600 dark:text-zinc-400 max-w-[50ch]">
             Open to SDE roles, AI/ML internships, and collaboration. Response within 24 hours.
           </p>
         </motion.div>
@@ -89,7 +89,7 @@ const Contact = () => {
                   <div
                     key={item.label}
                     className="flex items-center gap-3 p-3 rounded-xl
-                               bg-zinc-900/60 border border-zinc-800/60"
+                               bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/60 transition-colors duration-300"
                   >
                     <div className="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/20 flex items-center justify-center flex-shrink-0">
                       <item.icon size={15} strokeWidth={1.75} className="text-indigo-400" />
@@ -97,11 +97,11 @@ const Contact = () => {
                     <div className="min-w-0">
                       <div className="mono-label text-zinc-600 mb-0.5">{item.label}</div>
                       {item.href ? (
-                        <a href={item.href} className="text-sm text-zinc-300 hover:text-indigo-400 transition-colors truncate block">
+                        <a href={item.href} className="text-sm text-zinc-700 dark:text-zinc-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors truncate block">
                           {item.value}
                         </a>
                       ) : (
-                        <span className="text-sm text-zinc-300">{item.value}</span>
+                        <span className="text-sm text-zinc-700 dark:text-zinc-300">{item.value}</span>
                       )}
                     </div>
                   </div>
@@ -120,9 +120,9 @@ const Contact = () => {
                       aria-label={label}
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.92 }}
-                      className="w-9 h-9 rounded-xl bg-zinc-900 border border-zinc-800
+                      className="w-9 h-9 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800
                                  flex items-center justify-center
-                                 text-zinc-500 hover:text-indigo-400
+                                 text-zinc-500 hover:text-indigo-500 dark:hover:text-indigo-400
                                  hover:border-indigo-700/60 transition-all duration-200"
                     >
                       <Icon size={16} strokeWidth={1.75} />
@@ -138,7 +138,7 @@ const Contact = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="md:col-span-3 bg-zinc-900/60 border border-zinc-800/60 rounded-2xl p-6"
+              className="md:col-span-3 bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/60 rounded-2xl p-6 transition-colors duration-300"
             >
               {/* Honeypot — hidden from real users */}
               <div className="absolute left-[-9999px] top-[-9999px]" aria-hidden="true">
@@ -158,7 +158,7 @@ const Contact = () => {
                       id="contact-name" type="text" name="name"
                       value={formData.name} onChange={handleInputChange} required
                       placeholder="Your name"
-                      className="form-input bg-zinc-950/60 border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:border-indigo-500"
+                      className="form-input"
                     />
                   </div>
                   <div>
@@ -167,7 +167,7 @@ const Contact = () => {
                       id="contact-email" type="email" name="email"
                       value={formData.email} onChange={handleInputChange} required
                       placeholder="you@email.com"
-                      className="form-input bg-zinc-950/60 border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:border-indigo-500"
+                      className="form-input"
                     />
                   </div>
                 </div>
@@ -178,7 +178,7 @@ const Contact = () => {
                     id="contact-subject" type="text" name="subject"
                     value={formData.subject} onChange={handleInputChange} required
                     placeholder="What's this about?"
-                    className="form-input bg-zinc-950/60 border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:border-indigo-500"
+                    className="form-input"
                   />
                 </div>
 
@@ -188,7 +188,7 @@ const Contact = () => {
                     id="contact-message" rows={4} name="message"
                     value={formData.message} onChange={handleInputChange} required
                     placeholder="Tell me about your project or opportunity..."
-                    className="form-input bg-zinc-950/60 border-zinc-700 text-zinc-100 placeholder-zinc-600 focus:border-indigo-500 resize-none"
+                    className="form-input resize-none"
                   />
                 </div>
 
@@ -200,7 +200,7 @@ const Contact = () => {
                   className={`w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl
                              text-sm font-semibold transition-all duration-200 ${
                     isSubmitting
-                      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                      ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 cursor-not-allowed'
                       : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-sm hover:shadow-indigo-md'
                   }`}
                 >
