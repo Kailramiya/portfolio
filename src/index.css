@@ -22,6 +22,13 @@
     font-family: 'Geist', system-ui, sans-serif;
   }
 
+  /* Hide default cursor on desktop since we have CursorTrail */
+  @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    body, a, button, input, select, textarea, [role="button"] {
+      cursor: none !important;
+    }
+  }
+
   /* Tabular figures for data/numbers */
   .tabular-nums {
     font-variant-numeric: tabular-nums;

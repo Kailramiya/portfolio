@@ -32,7 +32,7 @@ function App() {
       </main>
       <ScrollToTopButton />
 
-      <footer className="relative bg-zinc-950 text-white py-10 overflow-hidden border-t border-zinc-900">
+      <footer className="relative bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white py-10 overflow-hidden border-t border-zinc-200 dark:border-zinc-900 transition-colors duration-300">
         {/* Ambient top fade */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
 
@@ -42,14 +42,14 @@ function App() {
               <div className="w-6 h-6 rounded-md bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
                 <span className="text-white font-black text-xs">A</span>
               </div>
-              <span className="font-semibold text-zinc-300 tracking-tight">Aman Kumar</span>
+              <span className="font-semibold text-zinc-700 dark:text-zinc-300 tracking-tight">Aman Kumar</span>
             </div>
 
-            <p className="mono-label text-zinc-600 text-center">
+            <p className="mono-label text-zinc-500 dark:text-zinc-600 text-center">
               Built with React, Vite &amp; Tailwind · Deployed on Vercel
             </p>
 
-            <p className="mono-label text-zinc-700">
+            <p className="mono-label text-zinc-500 dark:text-zinc-700">
               © {new Date().getFullYear()}
             </p>
           </div>
