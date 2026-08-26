@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Github, Linkedin, Mail, Download, ChevronDown } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
+import { useCodingStats } from '../hooks/useCodingStats';
 
 // Particle dot — floats upward from bottom, fades out
 const Particle = ({ style }) => (
@@ -91,10 +92,28 @@ const Hero = () => {
     { icon: Mail,     href: `mailto:${personal.email}`,     label: 'Email'    },
   ];
 
+  const { data } = useCodingStats();
+
+  let lcRating = '1540';
+  let totalProblems = '1000+';
+
+  if (data?.normalized) {
+    if (data.normalized.leetcode?.contest?.rating) {
+      lcRating = Math.round(data.normalized.leetcode.contest.rating).toString();
+    }
+    const leet = Number(data.normalized.leetcode?.solved?.total) || 0;
+    const cf = Number(data.normalized.codeforces?.solved?.total) || 0;
+    const gfg = Number(data.normalized.geeksforgeeks?.totalSolved) || 0;
+    const sum = leet + cf + gfg;
+    if (sum > 0) {
+      totalProblems = `${sum}+`;
+    }
+  }
+
   const stats = [
     { value: '8.16',  label: 'CGPA' },
-    { value: '1000+', label: 'Problems' },
-    { value: '1540',  label: 'LC Rating' },
+    { value: totalProblems, label: 'Problems' },
+    { value: lcRating,  label: 'LC Rating' },
   ];
 
   return (
