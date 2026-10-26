@@ -1,158 +1,104 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Github, ExternalLink, Calendar, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowUpRight, Github } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
-import TiltCard from './TiltCard';
+import { reveal } from './reveal';
 
-const projectGradients = [
-  "from-purple-500 to-indigo-600",
-  "from-emerald-500 to-teal-600",
-  "from-blue-500 to-cyan-600",
-  "from-orange-500 to-red-600",
+// Hover wash per project: [panel, text on panel]. Cycles if there are more projects.
+const washes = [
+  ['#171916', '#e6e1d6'],
+  ['#d3ff43', '#11120f'],
+  ['#3f5373', '#e6e1d6'],
+  ['#a84a30', '#e6e1d6'],
+  ['#5b3fa0', '#e6e1d6'],
 ];
 
-const Projects = () => {
-  const [expandedId, setExpandedId] = useState(null);
-
+export default function Projects() {
   return (
-    <section id="projects" className="section-compact bg-gray-50 dark:bg-gray-800">
-      <div className="container-custom section-padding">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center section-margin"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold gradient-text mb-3">
-            Featured Projects
+    <section id="work" className="section bg-paper text-paper-ink">
+      <div className="shell">
+        <div className="grid lg:grid-cols-[220px_1fr_auto] items-end gap-6 mb-16">
+          <p className="label text-olive order-2 lg:order-1">/ Selected work</p>
+          <h2 className="display text-[clamp(2.8rem,6vw,5rem)] order-1 lg:order-2">
+            Things I've <br /><em className="text-olive">put into production.</em>
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            AI/ML systems, full-stack platforms, and computer vision solutions
-          </p>
-        </motion.div>
+          <span className="label text-paper-dim order-3 hidden lg:block">2024—26</span>
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {portfolioData.projects.map((project, index) => {
-            const gradient = projectGradients[index % projectGradients.length];
-            const isExpanded = expandedId === project.id;
-
+        <ol>
+          {portfolioData.projects.map((p, i) => {
+            const [title, kicker] = p.title.split(' – ');
+            const primary = p.demo || p.github;
+            const [wash, washFg] = washes[i % washes.length];
             return (
-              <TiltCard
-                key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -6 }}
-                className="group bg-white dark:bg-gray-900 rounded-xl shadow-md hover:shadow-xl transition-all overflow-hidden border border-gray-100 dark:border-gray-700/50"
+              <motion.li
+                {...reveal()}
+                key={p.id}
+                style={{ '--wash': wash, '--wash-fg': washFg }}
+                className="project border-t border-paper-ink/15 py-10 md:py-14"
               >
-                {/* Project header with gradient */}
-                <div className={`bg-gradient-to-r ${gradient} p-5 text-white`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-lg font-bold mb-1 leading-tight">
-                        {project.title}
-                      </h3>
-                      <div className="flex items-center gap-2 text-white/80 text-xs">
-                        <Calendar size={12} />
-                        <span>{project.period}</span>
-                      </div>
-                    </div>
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full flex-shrink-0 ${
-                      project.status === 'Live'
-                        ? 'bg-white/20 text-white'
-                        : 'bg-white/15 text-white/90'
-                    }`}>
-                      {project.status}
-                    </span>
-                  </div>
+                <div className="flex justify-between label text-paper-dim wash-dim mb-8">
+                  <span>0{i + 1}</span>
+                  <span>{p.period}</span>
                 </div>
 
-                {/* Project body */}
-                <div className="p-5">
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                    {project.description}
-                  </p>
+                <div className="grid md:grid-cols-[1fr_1fr_auto] gap-6 md:gap-12 items-start">
+                  <div>
+                    {kicker && <p className="label text-olive wash-text mb-3">{kicker}</p>}
+                    <h3 className="display text-[clamp(2.2rem,4.4vw,3.6rem)]">{title}</h3>
+                  </div>
 
-                  {/* Expandable features */}
-                  <button
-                    onClick={() => setExpandedId(isExpanded ? null : project.id)}
-                    className="flex items-center gap-1 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 mb-3 transition-colors"
-                  >
-                    <motion.span
-                      animate={{ rotate: isExpanded ? 90 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronRight size={14} />
-                    </motion.span>
-                    {isExpanded ? 'Hide' : 'Show'} Key Features
-                  </button>
-
-                  <AnimatePresence>
-                    {isExpanded && (
-                      <motion.ul
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="space-y-2 mb-4 overflow-hidden"
-                      >
-                        {project.features.map((feature, i) => (
-                          <li key={i} className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
-                            <span className={`mt-1 w-1.5 h-1.5 rounded-full bg-gradient-to-br ${gradient} flex-shrink-0`} />
-                            {feature}
+                  <div>
+                    <p className="text-[15px] leading-relaxed text-paper-ink/75 wash-text max-w-[44ch]">{p.description}</p>
+                    <details className="group mt-5 max-w-[44ch]">
+                      <summary className="label text-olive wash-text cursor-pointer list-none hover:underline">
+                        <span className="group-open:hidden">+ Engineering notes</span>
+                        <span className="hidden group-open:inline">− Hide notes</span>
+                      </summary>
+                      <ul className="mt-4 space-y-3">
+                        {p.features.map((f, j) => (
+                          <li key={j} className="grid grid-cols-[16px_1fr] gap-2 text-sm leading-relaxed text-paper-ink/70 wash-text">
+                            <span className="text-olive wash-text" aria-hidden="true">—</span>
+                            {f}
                           </li>
                         ))}
-                      </motion.ul>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Tech tags */}
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {project.tech.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2 py-1 text-[11px] font-medium rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700"
-                      >
-                        {tech}
-                      </span>
-                    ))}
+                      </ul>
+                    </details>
                   </div>
 
-                  {/* Action buttons */}
-                  <div className="flex gap-2">
-                    <motion.a
-                      href={project.github}
+                  <div className="flex md:flex-col gap-3">
+                    <a
+                      href={primary}
                       target="_blank"
                       rel="noopener noreferrer"
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      className="flex items-center gap-1.5 px-3 py-2 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors text-xs font-medium"
+                      aria-label={`Open ${title}${p.demo ? ' live' : ' on GitHub'}`}
+                      className="btn-circle w-14 h-14 border-paper-ink/80"
                     >
-                      <Github size={14} />
-                      Source Code
-                    </motion.a>
-                    {project.demo && (
-                      <motion.a
-                        href={project.demo}
+                      <ArrowUpRight size={20} strokeWidth={1.5} className="arrow" />
+                    </a>
+                    {p.demo && p.github && (
+                      <a
+                        href={p.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        className={`flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r ${gradient} text-white rounded-lg transition-colors text-xs font-medium`}
+                        aria-label={`${title} source on GitHub`}
+                        className="btn-circle w-14 h-14 border-paper-ink/25"
                       >
-                        <ExternalLink size={14} />
-                        Live Demo
-                      </motion.a>
+                        <Github size={18} strokeWidth={1.5} />
+                      </a>
                     )}
                   </div>
                 </div>
-              </TiltCard>
+
+                <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2" aria-label="Technologies">
+                  {p.tech.map((t) => (
+                    <li key={t} className="chip text-paper-dim wash-dim">{t}</li>
+                  ))}
+                </ul>
+              </motion.li>
             );
           })}
-        </div>
+        </ol>
       </div>
     </section>
   );
-};
-
-export default Projects;
+}

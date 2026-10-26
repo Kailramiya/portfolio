@@ -2,201 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   EDITORIAL DESIGN LANGUAGE
+   Warm ink base, cream type, one lime signal. Sans for structure,
+   italic serif for emphasis, mono for labels.
+   ============================================================ */
+
 @layer base {
-  :root {
-    /* Accent: Electric Indigo — single saturated accent, not AI-purple */
-    --accent: 99 102 241;   /* indigo-500 */
-    --accent-dark: 79 70 229; /* indigo-600 */
-  }
+  :root { color-scheme: dark; }
 
   html {
     scroll-behavior: smooth;
-    font-feature-settings: "cv01", "cv02", "cv03", "cv04", "kern" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
   }
 
   body {
-    @apply transition-colors duration-300;
-    font-family: 'Geist', system-ui, sans-serif;
+    @apply bg-ink text-cream font-sans;
+    overflow-x: hidden;
   }
 
-  /* Hide default cursor on desktop since we have CursorTrail */
-  @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
-    body, a, button, input, select, textarea, [role="button"] {
-      cursor: none !important;
-    }
-  }
+  h1, h2, h3 { text-wrap: balance; }
 
-  /* Tabular figures for data/numbers */
-  .tabular-nums {
-    font-variant-numeric: tabular-nums;
-    font-family: 'Geist Mono', monospace;
-  }
+  ::selection { background: #d3ff43; color: #11120f; }
 
-  /* Text balance for headings */
-  h1, h2, h3 {
-    text-wrap: balance;
-  }
+  :focus-visible { outline: 2px solid #d3ff43; outline-offset: 3px; border-radius: 2px; }
 
-  ::selection {
-    background: rgba(99, 102, 241, 0.2);
-    color: inherit;
-  }
-
-  /* Reduced motion: kill everything */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after {
       animation-duration: 0.001ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.001ms !important;
-      scroll-behavior: auto !important;
     }
   }
 }
 
 @layer components {
-  /* Glass card — real glassmorphism with inner border */
-  .glass-effect {
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 8px 32px rgba(0, 0, 0, 0.12);
+  .shell { @apply max-w-[1240px] mx-auto px-4 sm:px-8 lg:px-10; }
+  .section { @apply py-24 md:py-36; }
+
+  /* "/ A QUICK READ" style mono labels */
+  .label { @apply font-mono text-[11px] uppercase tracking-[0.14em]; }
+
+  /* Big sans headline with an italic serif second line */
+  .display {
+    @apply font-sans font-medium leading-[0.95];
+    letter-spacing: -0.065em;
+  }
+  .display em {
+    @apply font-serif font-normal italic;
+    letter-spacing: -0.035em;
   }
 
-  .dark .glass-effect {
-    background: rgba(15, 15, 25, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+  .chip { @apply font-mono text-[11px] tracking-wide; }
+
+  .hairline { @apply border-t border-cream/10; }
+
+  /* Pill button with lime outline */
+  .btn-pill {
+    @apply inline-flex items-center gap-2 h-11 px-5 rounded-full border border-lime/70 text-lime
+           font-mono text-[11px] uppercase tracking-[0.14em] transition-colors duration-300
+           hover:bg-lime hover:text-ink;
+  }
+  .btn-circle {
+    @apply inline-flex items-center justify-center w-11 h-11 rounded-full border border-current
+           transition-all duration-300 shrink-0;
   }
 
-  /* Gradient text — indigo to violet (not AI-purple slop) */
-  .gradient-text {
-    @apply bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500 bg-clip-text text-transparent;
-    background-size: 200% 100%;
+  /* Project rows: a per-project colour wash rises from the bottom on hover/focus.
+     Set --wash (panel) and --wash-fg (text on it) inline. */
+  .project { position: relative; transition: padding 0.35s, color 0.35s; }
+  .project::after {
+    content: ""; position: absolute; inset: 0 -15px; z-index: 0;
+    background: var(--wash); transform: scaleY(0); transform-origin: bottom;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .project > * { position: relative; z-index: 1; }
+  .project .arrow { transition: transform 0.3s; }
+  .project:focus-within { color: var(--wash-fg); }
+  .project:focus-within::after { transform: scaleY(1); }
+  .project:focus-within .wash-text { color: inherit; }
+  .project:focus-within .wash-dim { color: inherit; opacity: 0.7; }
+  .project:focus-within .btn-circle { border-color: currentColor; }
+  @media (hover: hover) {
+    .project:hover { padding-inline: 15px; color: var(--wash-fg); }
+    .project:hover::after { transform: scaleY(1); }
+    .project:hover .wash-text { color: inherit; }
+    .project:hover .wash-dim { color: inherit; opacity: 0.7; }
+    .project:hover .btn-circle { border-color: currentColor; }
+    .project:hover .arrow { transform: rotate(45deg); }
+    .project .btn-circle:hover { background: var(--wash-fg); color: var(--wash); }
   }
 
-  /* Display headline style */
-  .display-heading {
-    font-family: 'Geist', sans-serif;
-    letter-spacing: -0.04em;
-    line-height: 1.0;
-    font-weight: 800;
+  /* Underline-only inputs for the lime contact block */
+  .field {
+    @apply w-full bg-transparent border-0 border-b border-ink/30 px-3 py-3 rounded-t-md text-base text-ink
+           placeholder:text-ink/45 transition-colors focus:outline-none
+           focus:bg-ink focus:text-cream focus:border-ink focus:placeholder:text-cream/40;
+    caret-color: #d3ff43;
   }
-
-  /* Mono label — for stats, badges, eyebrows */
-  .mono-label {
-    font-family: 'Geist Mono', monospace;
-    font-size: 0.6875rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
-  .section-padding {
-    @apply px-4 sm:px-6 lg:px-8;
-  }
-
-  .container-custom {
-    @apply max-w-6xl mx-auto;
-  }
-
-  .section-compact {
-    @apply py-20 md:py-28;
-  }
-
-  .section-margin {
-    @apply mb-14 md:mb-20;
-  }
-
-  /* Premium skill pill */
-  .skill-pill {
-    @apply px-3 py-1.5 text-[11px] font-medium rounded-md
-           bg-zinc-100 dark:bg-zinc-800/80
-           text-zinc-600 dark:text-zinc-300
-           border border-zinc-200 dark:border-zinc-700/60
-           transition-all duration-200
-           hover:border-indigo-400 dark:hover:border-indigo-500
-           hover:text-indigo-600 dark:hover:text-indigo-400
-           hover:bg-indigo-50 dark:hover:bg-indigo-950/40
-           cursor-default;
-    font-family: 'Geist Mono', monospace;
-    font-size: 0.6875rem;
-  }
-
-  /* Input style */
-  .form-input {
-    @apply w-full px-4 py-3 rounded-xl text-sm
-           border border-zinc-200 dark:border-zinc-700
-           bg-zinc-50 dark:bg-zinc-900/80
-           text-zinc-900 dark:text-zinc-100
-           placeholder-zinc-400 dark:placeholder-zinc-600
-           focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500
-           transition-all duration-200;
-    font-family: 'Geist', sans-serif;
-  }
-
-  /* Card base — tinted shadow */
-  .card-base {
-    @apply bg-white dark:bg-zinc-900 rounded-2xl
-           border border-zinc-100 dark:border-zinc-800/60
-           shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)]
-           transition-all duration-300;
-  }
-}
-
-@layer utilities {
-  /* Grain noise overlay — breaks digital flatness */
-  .noise-overlay::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 128px 128px;
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.035;
-    mix-blend-mode: overlay;
-  }
-
-  /* Floating animations */
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) scale(1); }
-    50% { transform: translateY(-18px) scale(1.03); }
-  }
-  @keyframes float-delayed {
-    0%, 100% { transform: translateY(0px) scale(1); }
-    50% { transform: translateY(-12px) scale(1.02); }
-  }
-  @keyframes float-slow {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-  }
-  @keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  @keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.4); }
-    50% { box-shadow: 0 0 0 8px rgba(99,102,241,0); }
-  }
-
-  .animate-float { animation: float 6s ease-in-out infinite; }
-  .animate-float-delayed { animation: float-delayed 8s ease-in-out infinite 2s; }
-  .animate-float-slow { animation: float-slow 10s ease-in-out infinite 4s; }
-  .animate-spin-slow { animation: spin-slow 8s linear infinite; }
-  .animate-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2.5s infinite;
-  }
-  .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 }

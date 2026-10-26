@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { portfolioData } from '../data/portfolio';
 
-// Shared live-stats source for the Coding Dashboard and Achievements sections,
+// Shared live-stats source for the Stats section,
 // so both show the same numbers from a single (deduped) API call.
 
 function lastPathSegment(url) {

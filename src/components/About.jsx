@@ -1,126 +1,87 @@
 import { motion } from 'framer-motion';
 import { portfolioData } from '../data/portfolio';
+import { reveal } from './reveal';
 
-const highlights = [
+const focus = [
   {
-    label: 'AI / ML Engineering',
-    detail: 'NLP, transformer models, production ML pipelines',
-    color: 'bg-violet-500',
+    title: 'Applied AI / ML',
+    body: 'Transformer NLP, computer vision and vision-LLM pipelines, tuned for latency and reliability rather than demos.',
   },
   {
-    label: 'Computer Vision',
-    detail: 'Real-time face recognition, multi-threaded video & alerts',
-    color: 'bg-emerald-500',
+    title: 'Systems & APIs',
+    body: 'Multi-tenant platforms, RBAC, payments, caching and rate limiting: the plumbing that keeps a product honest.',
   },
   {
-    label: 'Scalable Systems',
-    detail: 'Multi-tenant platforms on AWS with async pipelines',
-    color: 'bg-orange-500',
-  },
-  {
-    label: 'Full-Stack Dev',
-    detail: 'React, Next.js, Node.js, FastAPI, PostgreSQL, MongoDB',
-    color: 'bg-sky-500',
+    title: 'Automation',
+    body: 'RPA bots that replace manual workflows end to end, packaged, licensed and monitored like real software.',
   },
 ];
 
-const quickStats = [
-  { value: '2+',    label: 'Internships' },
-  { value: '1000+', label: 'DSA solved' },
-  { value: '~40%',  label: 'Throughput boost' },
-  { value: '26',    label: 'PTE types graded' },
-];
+export default function About() {
+  const { personal, experience, education } = portfolioData;
+  const facts = [
+    ['Based in', personal.location],
+    ['Currently', `${experience[0].role} @ ${experience[0].company}`],
+    ['Studying', `B.Tech CSE · IIIT Raichur · ${education.gpa.split('/')[0]} CGPA`],
+  ];
 
-const About = () => {
   return (
-    <section id="about" className="section-compact bg-zinc-50 dark:bg-zinc-900">
-      <div className="container-custom section-padding">
-        <div className="grid md:grid-cols-2 gap-16 items-start">
-
-          {/* Left column */}
-          <motion.div
-            initial={{ opacity: 0, x: -32 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-6"
-          >
-            <div>
-              <h2 className="display-heading text-4xl md:text-5xl text-zinc-900 dark:text-zinc-50 mb-4">
-                About me
-              </h2>
-              <p className="text-base text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-[58ch]">
-                {portfolioData.personal.summary}
-              </p>
+    <>
+      <section id="about" className="section">
+        <div className="shell grid lg:grid-cols-[220px_1fr] gap-10">
+          <p className="label text-lime lg:pt-6">/ A quick read</p>
+          <div>
+            <motion.h2 {...reveal()} className="display text-[clamp(2.3rem,5.4vw,4.4rem)] leading-[1.02] max-w-[18ch]">
+              I like problems where <em className="text-lime">models</em> meet messy, real-world systems.
+            </motion.h2>
+            <div className="mt-14 md:pl-[30%] lg:pl-[38%]">
+              <motion.p {...reveal(0.1)} className="max-w-[46ch] text-[15px] leading-relaxed text-cream/70 font-light">
+                {personal.summary}
+              </motion.p>
+              <motion.dl {...reveal(0.2)} className="mt-10 divide-y divide-cream/10 border-y border-cream/10 max-w-[46ch]">
+                {facts.map(([k, v]) => (
+                  <div key={k} className="flex justify-between gap-6 py-3.5 text-sm">
+                    <dt className="label text-cream/50 pt-0.5">{k}</dt>
+                    <dd className="text-right text-cream/90">{v}</dd>
+                  </div>
+                ))}
+              </motion.dl>
             </div>
-
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-[58ch]">
-              Pursuing B.Tech at{' '}
-              <span className="font-semibold text-zinc-800 dark:text-zinc-200">IIIT Raichur</span>{' '}
-              · CGPA{' '}
-              <span className="font-bold text-zinc-900 dark:text-zinc-100 tabular-nums">8.16/10</span>.
-              Previously at{' '}
-              <span className="font-semibold text-zinc-800 dark:text-zinc-200">AI4Chat</span>,
-              scaling ML inference throughput by ~40%.
-            </p>
-
-            {/* Stats grid */}
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              {quickStats.map(({ value, label }) => (
-                <div
-                  key={label}
-                  className="p-4 rounded-xl bg-white dark:bg-zinc-800/60
-                             border border-zinc-100 dark:border-zinc-700/50
-                             shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
-                >
-                  <div className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tabular-nums tracking-tighter leading-none mb-1">
-                    {value}
-                  </div>
-                  <div className="mono-label text-zinc-400 dark:text-zinc-500">{label}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Right column — expertise cards */}
-          <motion.div
-            initial={{ opacity: 0, x: 32 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-3"
-          >
-            <div className="mono-label text-zinc-400 dark:text-zinc-500 mb-5">Areas of expertise</div>
-            {highlights.map((item, i) => (
-              <motion.div
-                key={item.label}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ x: 4 }}
-                className="flex items-start gap-4 p-4 rounded-xl
-                           bg-white dark:bg-zinc-800/60
-                           border border-zinc-100 dark:border-zinc-700/50
-                           shadow-[0_2px_8px_rgba(0,0,0,0.04)]
-                           transition-all duration-200 group cursor-default"
-              >
-                <div className={`w-2 h-2 rounded-full ${item.color} flex-shrink-0 mt-1.5 ring-4 ring-current/20`} />
-                <div>
-                  <div className="font-semibold text-sm text-zinc-800 dark:text-zinc-200 mb-0.5">
-                    {item.label}
-                  </div>
-                  <div className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                    {item.detail}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+          </div>
         </div>
-      </div>
-    </section>
-  );
-};
+      </section>
 
-export default About;
+      <section aria-labelledby="focus-heading" className="section pt-0">
+        <div className="shell grid lg:grid-cols-[0.8fr_1.2fr] gap-12">
+          <div>
+            <p className="label text-lime mb-6">/ Focus</p>
+            <h2 id="focus-heading" className="display text-[clamp(2.6rem,5.5vw,4.6rem)]">
+              Useful, by <br /><em className="text-lime">design.</em>
+            </h2>
+          </div>
+          <ol className="border-t border-cream/10">
+            {focus.map((f, i) => (
+              <motion.li
+                key={f.title}
+                {...reveal(i * 0.08)}
+                className="group grid grid-cols-[48px_1fr_auto] gap-4 items-start py-8 border-b border-cream/10"
+              >
+                <span className="label text-lime pt-2">0{i + 1}</span>
+                <div>
+                  <h3 className="text-2xl tracking-tight">{f.title}</h3>
+                  <p className="mt-2 text-sm text-cream/60 leading-relaxed max-w-[48ch]">{f.body}</p>
+                </div>
+                <span
+                  aria-hidden="true"
+                  className="text-lime text-xl pt-1 transition-transform duration-500 group-hover:translate-x-1.5"
+                >
+                  →
+                </span>
+              </motion.li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    </>
+  );
+}

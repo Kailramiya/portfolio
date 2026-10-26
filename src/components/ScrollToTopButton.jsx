@@ -1,41 +1,34 @@
-import { useState, useEffect } from 'react';
-import { ChevronUp } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { ArrowUp } from 'lucide-react';
 
-const ScrollToTopButton = () => {
-  const [isVisible, setIsVisible] = useState(false);
+// Scroll-progress pill that doubles as back-to-top.
+export default function ScrollToTopButton() {
+  const [pct, setPct] = useState(0);
 
   useEffect(() => {
-    const toggleVisibility = () => {
-      setIsVisible(window.pageYOffset > 300);
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setPct(max > 0 ? Math.round((window.scrollY / max) * 100) : 0);
     };
-
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0 }}
-          onClick={scrollToTop}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="fixed bottom-6 right-6 z-50 p-3 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all"
-          aria-label="Scroll to top"
-        >
-          <ChevronUp size={20} />
-        </motion.button>
-      )}
-    </AnimatePresence>
+    <>
+      <div className="fixed top-0 left-0 z-[60] h-[3px] bg-lime origin-left" style={{ width: `${pct}%` }} aria-hidden="true" />
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label={`Back to top (${pct}% scrolled)`}
+        className={`fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 h-10 px-4 rounded-full bg-ink/90 backdrop-blur border border-cream/15 text-cream label transition-all duration-500 hover:border-lime hover:text-lime ${
+          pct > 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}
+      >
+        <ArrowUp size={13} aria-hidden="true" />
+        <span className="tabular-nums">{pct}%</span>
+      </button>
+    </>
   );
-};
-
-export default ScrollToTopButton;
+}

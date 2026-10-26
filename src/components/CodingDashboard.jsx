@@ -1,327 +1,176 @@
-import { useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
-import {
-	ExternalLink,
-	Github,
-	Code,
-	Trophy,
-	AlertCircle,
-	RefreshCw,
-} from 'lucide-react'
-import { useCodingStats } from '../hooks/useCodingStats'
-import { useTheme } from '../hooks/useTheme'
-import TiltCard from './TiltCard'
-import { GitHubCalendar } from 'react-github-calendar'
+import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowUpRight, RefreshCw } from 'lucide-react';
+import { GitHubCalendar } from 'react-github-calendar';
+import { useCodingStats } from '../hooks/useCodingStats';
+import { portfolioData } from '../data/portfolio';
+import { reveal } from './reveal';
 
-function SkeletonCard() {
-	return (
-		<div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-800">
-			<div className="flex items-center justify-between mb-4">
-				<div className="h-5 w-28 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-				<div className="h-9 w-9 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
-			</div>
-			<div className="space-y-3">
-				<div className="h-7 w-24 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-				<div className="h-4 w-full bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-				<div className="h-4 w-5/6 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-			</div>
-		</div>
-	)
-}
+const calendarTheme = { dark: ['#22231d', '#4e5f1e', '#7a9a20', '#a9d12f', '#d3ff43'] };
 
-function StatPill({ label, value }) {
-	return (
-		<div className="flex items-center justify-between gap-3 py-1.5">
-			<span className="text-xs text-gray-600 dark:text-gray-400">{label}</span>
-			<span className="text-sm font-semibold text-gray-900 dark:text-white">{value}</span>
-		</div>
-	)
-}
+const num = (v) => (Number.isFinite(Number(v)) ? Math.round(Number(v)) : null);
 
-function PlatformCard({
-	title,
-	icon,
-	accent = 'from-primary-500 to-purple-600',
-	profileUrl,
-	primaryValue,
-	primaryLabel,
-	stats = [],
-	status,
-}) {
-	const Icon = icon
+export default function CodingDashboard() {
+  const { data, loading, error, reload, handles } = useCodingStats();
+  const [year, setYear] = useState('last');
+  const n = data?.normalized || {};
 
-	return (
-		<TiltCard
-			max={6}
-			initial={{ opacity: 0, y: 20 }}
-			whileInView={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.5 }}
-			whileHover={{ y: -3 }}
-			className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all border border-gray-200 dark:border-gray-800"
-		>
-			<div className="flex items-start justify-between gap-4 mb-4">
-				<div>
-					<div className="flex items-center gap-2">
-						<h3 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h3>
-						{status && (
-							<span
-								className={`px-2 py-1 text-xs font-medium rounded-full ${
-									status === 'ok'
-										? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-										: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
-								}`}
-							>
-								{status === 'ok' ? 'Live' : 'Partial'}
-							</span>
-						)}
-					</div>
-					{primaryValue != null && (
-						<div className="mt-2">
-							<div className="text-3xl font-bold gradient-text leading-none">{primaryValue}</div>
-							<div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{primaryLabel}</div>
-						</div>
-					)}
-				</div>
+  const currentYear = new Date().getFullYear();
+  const years = ['last', ...Array.from({ length: currentYear - 2020 + 1 }, (_, i) => currentYear - i)];
 
-				<div className="flex items-center gap-2 flex-shrink-0">
-					{profileUrl && (
-						<motion.a
-							href={profileUrl}
-							target="_blank"
-							rel="noopener noreferrer"
-							aria-label={`Open ${title} profile`}
-							whileHover={{ scale: 1.08 }}
-							whileTap={{ scale: 0.95 }}
-							className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200 transition-colors"
-						>
-							<ExternalLink size={16} />
-						</motion.a>
-					)}
-					<div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${accent} text-white flex items-center justify-center`}>
-						<Icon size={20} />
-					</div>
-				</div>
-			</div>
+  // Live values replace the static fallbacks in portfolio.js when the API answers.
+  const live = useMemo(() => {
+    const solved = [
+      n.leetcode?.solved?.total,
+      n.codeforces?.solved?.total,
+      n.codechef?.solved?.total,
+      n.geeksforgeeks?.totalSolved,
+    ].map(num).filter((v) => v != null);
+    return {
+      totalSolved: solved.length ? solved.reduce((a, b) => a + b, 0) : null,
+      leetcodeRating: num(n.leetcode?.contest?.rating),
+      gfgScore: num(n.geeksforgeeks?.codingScore),
+      codeforcesMax: num(n.codeforces?.maxRating),
+      codechefMax: num(n.codechef?.maxRating ?? n.codechef?.rating),
+    };
+  }, [n]);
 
-			<div className="divide-y divide-gray-100 dark:divide-gray-800">
-				{stats.map((row) => (
-					<StatPill key={row.label} label={row.label} value={row.value} />
-				))}
-			</div>
+  const platforms = [
+    {
+      name: 'LeetCode',
+      url: handles.leetcode && `https://leetcode.com/${handles.leetcode}/`,
+      rows: [
+        ['Solved', n.leetcode?.solved?.total],
+        ['Easy / Med / Hard', n.leetcode && [n.leetcode.solved?.easy, n.leetcode.solved?.medium, n.leetcode.solved?.hard].join(' / ')],
+        ['Contest rating', num(n.leetcode?.contest?.rating)],
+      ],
+    },
+    {
+      name: 'Codeforces',
+      url: handles.codeforces && `https://codeforces.com/profile/${handles.codeforces}`,
+      rows: [
+        ['Rating', n.codeforces?.rating],
+        ['Max rating', n.codeforces?.maxRating],
+        ['Rank', n.codeforces?.rank],
+      ],
+    },
+    {
+      name: 'GeeksforGeeks',
+      url: handles.gfg && `https://www.geeksforgeeks.org/user/${handles.gfg}/`,
+      rows: [
+        ['Solved', n.geeksforgeeks?.totalSolved],
+        ['Coding score', n.geeksforgeeks?.codingScore],
+        ['Institute rank', n.geeksforgeeks?.instituteRank],
+      ],
+    },
+  ];
 
-			{profileUrl && (
-				<div className="mt-4 flex justify-end">
-					<motion.a
-						href={profileUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						whileHover={{ scale: 1.05 }}
-						whileTap={{ scale: 0.95 }}
-						className="inline-flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
-					>
-						<ExternalLink size={14} />
-						View Profile
-					</motion.a>
-				</div>
-			)}
-		</TiltCard>
-	)
-}
+  return (
+    <section id="stats" className="section">
+      <div className="shell">
+        <div className="flex flex-wrap items-end justify-between gap-6 mb-16">
+          <div>
+            <p className="label text-lime mb-6">/ Proof of practice</p>
+            <h2 className="display text-[clamp(2.8rem,6vw,5rem)]">
+              Numbers that <br /><em className="text-lime">keep moving.</em>
+            </h2>
+          </div>
+          <p className="label text-cream/50 flex items-center gap-2">
+            <span className={`w-1.5 h-1.5 rounded-full ${data ? 'bg-lime' : 'bg-cream/40'}`} aria-hidden="true" />
+            {loading ? 'Syncing…' : data ? 'Live · synced every 6h' : 'Offline · last known'}
+          </p>
+        </div>
 
-export default function CodingDashboard({
-	handles,
-}) {
-	const { data, loading, error, reload, handles: linkHandles } = useCodingStats(handles)
-	const { theme } = useTheme()
-	const [selectedYear, setSelectedYear] = useState('last')
+        {/* Headline numbers */}
+        <dl className="grid grid-cols-2 md:grid-cols-4 border-t border-l border-cream/10">
+          {portfolioData.achievements.map((a, i) => (
+            <motion.div
+              {...reveal((i % 4) * 0.06)}
+              key={a.title}
+              className="border-r border-b border-cream/10 p-5 md:p-7"
+            >
+              <dt className="label text-cream/50">{a.label}</dt>
+              <dd className="mt-4 display text-[clamp(2rem,4vw,3.2rem)] tabular-nums text-cream">
+                {(a.live && live[a.live]) ?? a.stat}
+              </dd>
+              <dd className="mt-2 text-xs text-cream/50 leading-snug">{a.detail}</dd>
+            </motion.div>
+          ))}
+        </dl>
 
-	const currentYear = new Date().getFullYear()
-	const githubYears = ['last', ...Array.from({ length: currentYear - 2020 + 1 }, (_, i) => currentYear - i)]
+        {error && (
+          <div role="status" className="mt-6 flex items-center justify-between gap-4 border border-cream/15 px-5 py-4 text-sm text-cream/70">
+            Couldn't reach the stats API, so you're seeing last known values.
+            <button type="button" onClick={reload} className="btn-pill h-9 shrink-0">
+              <RefreshCw size={13} aria-hidden="true" /> Retry
+            </button>
+          </div>
+        )}
 
-	const normalized = data?.normalized || {}
-	const handlesOut = data?.handles || {}
+        {/* Per-platform detail */}
+        <div className="mt-16 grid md:grid-cols-3 gap-x-10">
+          {platforms.map((p) => (
+            <div key={p.name} className="border-t border-cream/10 py-7">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-2xl tracking-tight">{p.name}</h3>
+                {p.url && (
+                  <a
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${p.name} profile`}
+                    className="btn-circle w-10 h-10 text-cream/70 border-cream/25 hover:text-ink hover:bg-lime hover:border-lime"
+                  >
+                    <ArrowUpRight size={16} strokeWidth={1.5} />
+                  </a>
+                )}
+              </div>
+              <dl className="space-y-2.5">
+                {p.rows.map(([k, v]) => (
+                  <div key={k} className="flex justify-between gap-4 text-sm">
+                    <dt className="text-cream/50">{k}</dt>
+                    <dd className="tabular-nums text-cream/90">
+                      {loading ? <span className="inline-block w-10 h-3 bg-cream/10 animate-pulse" /> : v ?? '—'}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </div>
 
-	const totalSolved = useMemo(() => {
-		const leet = Number(normalized?.leetcode?.solved?.total)
-		const cf = Number(normalized?.codeforces?.solved?.total)
-		const gfg = Number(normalized?.geeksforgeeks?.totalSolved)
-		const values = [leet, cf, gfg].filter(v => Number.isFinite(v))
-		if (!values.length) return null
-		return values.reduce((a, b) => a + b, 0)
-	}, [normalized])
-
-	const cards = useMemo(() => {
-		const leetcode = normalized.leetcode
-		const codeforces = normalized.codeforces
-		const codechef = normalized.codechef
-		const gfg = normalized.geeksforgeeks
-		const github = normalized.github
-
-		return [
-			{
-				key: 'leetcode',
-				title: 'LeetCode',
-				icon: Code,
-				accent: 'from-primary-500 to-purple-600',
-				profileUrl: linkHandles.leetcode ? `https://leetcode.com/${linkHandles.leetcode}/` : null,
-				primaryValue: leetcode?.solved?.total ?? null,
-				primaryLabel: 'Problems solved',
-				stats: [
-					{ label: 'Solved', value: leetcode?.solved?.total ?? '—' },
-					{ label: 'Easy', value: leetcode?.solved?.easy ?? '—' },
-					{ label: 'Medium', value: leetcode?.solved?.medium ?? '—' },
-					{ label: 'Hard', value: leetcode?.solved?.hard ?? '—' },
-					{ label: 'Contest rating', value: leetcode?.contest?.rating != null ? Math.round(leetcode.contest.rating) : '—' },
-				],
-				status: leetcode ? 'ok' : null,
-			},
-			{
-				key: 'codeforces',
-				title: 'Codeforces',
-				icon: Trophy,
-				accent: 'from-purple-600 to-pink-600',
-				profileUrl: linkHandles.codeforces ? `https://codeforces.com/profile/${linkHandles.codeforces}` : null,
-				primaryValue: codeforces?.rating ?? null,
-				primaryLabel: 'Current rating',
-				stats: [
-					{ label: 'Solved', value: codeforces?.solved?.total ?? '—' },
-					{ label: 'Rank', value: codeforces?.rank ?? '—' },
-					{ label: 'Max rating', value: codeforces?.maxRating ?? '—' },
-					{ label: 'Max rank', value: codeforces?.maxRank ?? '—' },
-					{ label: 'Contests', value: codeforces?.contestsCount ?? '—' },
-				],
-				status: codeforces ? 'ok' : null,
-			},
-			{
-				key: 'gfg',
-				title: 'GeeksforGeeks',
-				icon: Code,
-				accent: 'from-green-600 to-emerald-600',
-				profileUrl: linkHandles.gfg ? `https://www.geeksforgeeks.org/user/${linkHandles.gfg}/` : null,
-				primaryValue: gfg?.totalSolved ?? null,
-				primaryLabel: 'Problems solved',
-				stats: [
-					{ label: 'Solved', value: gfg?.totalSolved ?? '—' },
-					{ label: 'Coding score', value: gfg?.codingScore ?? '—' },
-					{ label: 'Institute rank', value: gfg?.instituteRank ?? '—' },
-				],
-				status: gfg ? 'ok' : null,
-			},
-		]
-	}, [linkHandles, normalized])
-
-	return (
-		<section id="codingdashboard" className="section-compact bg-gray-50 dark:bg-gray-800">
-			<div className="container-custom section-padding">
-				<motion.div
-					initial={{ opacity: 0, y: 30 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5 }}
-					className="text-center section-margin"
-				>
-					<h2 className="text-3xl md:text-4xl font-bold gradient-text mb-3">Competitive Programming</h2>
-					<p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-						Live stats from coding platforms (cached to avoid rate-limits)
-					</p>
-				</motion.div>
-
-				{!loading && !error && (
-					<div className="max-w-4xl mx-auto mb-6">
-						<div className="glass-effect rounded-xl p-4 dark:bg-gray-900/40">
-							<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-								<div>
-									<div className="text-sm font-semibold text-gray-900 dark:text-white">Total Questions Solved</div>
-									<div className="text-xs text-gray-600 dark:text-gray-400">Across platforms (best available)</div>
-								</div>
-								<div className="text-3xl font-bold gradient-text leading-none">
-									{totalSolved ?? '—'}
-								</div>
-							</div>
-						</div>
-					</div>
-				)}
-
-				{error && (
-					<div className="max-w-3xl mx-auto mb-6">
-						<div className="bg-white dark:bg-gray-900 border border-red-200 dark:border-red-900 rounded-xl p-4 shadow-lg">
-							<div className="flex items-start gap-3">
-								<AlertCircle className="text-red-500" size={20} />
-								<div className="flex-1">
-									<div className="text-sm font-semibold text-gray-900 dark:text-white">Couldn’t load stats</div>
-									<div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{error}</div>
-								</div>
-								<motion.button
-									onClick={reload}
-									whileHover={{ scale: 1.05 }}
-									whileTap={{ scale: 0.95 }}
-									className="inline-flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
-								>
-									<RefreshCw size={14} />
-									Retry
-								</motion.button>
-							</div>
-						</div>
-					</div>
-				)}
-
-				<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-					{loading
-						? Array.from({ length: 6 }).map((_, idx) => <SkeletonCard key={idx} />)
-						: cards.map((card) => (
-							<PlatformCard
-								key={card.key}
-								title={card.title}
-								icon={card.icon}
-								accent={card.accent}
-								profileUrl={card.profileUrl}
-								primaryValue={card.primaryValue}
-								primaryLabel={card.primaryLabel}
-								stats={card.stats}
-								status={card.status}
-							/>
-						))}
-				</div>
-
-				<div className="mt-14 max-w-5xl mx-auto">
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.5, delay: 0.2 }}
-						className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800 p-6 md:p-8 overflow-hidden"
-					>
-						<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-							<h3 className="text-xl font-bold text-gray-900 dark:text-white">GitHub Contributions</h3>
-							<select
-								value={selectedYear}
-								onChange={(e) => setSelectedYear(e.target.value === 'last' ? 'last' : Number(e.target.value))}
-								className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer shadow-sm transition-colors"
-							>
-								{githubYears.map(year => (
-									<option key={year} value={year}>
-										{year === 'last' ? 'Last Year' : year}
-									</option>
-								))}
-							</select>
-						</div>
-						<div className="overflow-x-auto pb-4">
-							<div className="min-w-[800px] flex justify-center">
-								<GitHubCalendar 
-									username={linkHandles?.github || 'Kailramiya'} 
-									colorScheme={theme === 'dark' ? 'dark' : 'light'}
-									blockSize={15}
-									blockMargin={5}
-									fontSize={14}
-									year={selectedYear}
-								/>
-							</div>
-						</div>
-					</motion.div>
-				</div>
-
-				<p className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
-					Stats are auto-synced every 6 hours via backend services deployed on Vercel.
-				</p>
-			</div>
-		</section>
-	)
+        {/* GitHub calendar */}
+        <motion.div {...reveal()} className="mt-16 border-t border-cream/10 pt-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <h3 className="text-2xl tracking-tight">GitHub contributions</h3>
+            <label className="flex items-center gap-3 label text-cream/50">
+              Year
+              <select
+                value={year}
+                onChange={(e) => setYear(e.target.value === 'last' ? 'last' : Number(e.target.value))}
+                className="bg-ink-2 border border-cream/20 rounded-full px-4 py-2 text-cream normal-case tracking-normal font-sans text-sm focus:border-lime"
+              >
+                {years.map((y) => (
+                  <option key={y} value={y}>{y === 'last' ? 'Last 12 months' : y}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className="overflow-x-auto pb-4 text-cream/60">
+            <div className="min-w-[760px]">
+              <GitHubCalendar
+                username={handles?.github || 'Kailramiya'}
+                colorScheme="dark"
+                theme={calendarTheme}
+                blockSize={13}
+                blockMargin={4}
+                fontSize={12}
+                year={year}
+              />
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
 }
